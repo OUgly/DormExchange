@@ -4,7 +4,6 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import Button from './ui/Button'
 
 export default function Navbar() {
   const [session, setSession] = useState<any>(null)
@@ -20,24 +19,29 @@ export default function Navbar() {
     }
   }, [])
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
-  }
-
   return (
-    <nav className="mb-6 flex items-center justify-between border-b p-4">
-      <Link href="/" className="text-xl font-bold">
+    <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-line bg-panel px-4 py-2">
+      <Link href="/" className="text-lg font-semibold">
         DormExchange
       </Link>
-      <div className="space-x-4">
-        <Link href="/listings/new" className="text-sm font-medium">
-          New Listing
-        </Link>
+      <div className="flex flex-1 justify-center px-4">
+        <input
+          type="text"
+          placeholder="Search..."
+          className="w-full max-w-xs rounded-md border border-line bg-muted px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+        />
+      </div>
+      <div>
         {session ? (
-          <Button onClick={handleSignOut}>Sign Out</Button>
-          ) : (
+          <Link
+            href="#"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-muted"
+          >
+            <span className="sr-only">Account</span>
+          </Link>
+        ) : (
           <Link href="/auth/login" className="text-sm font-medium">
-            Login
+            Sign In
           </Link>
         )}
       </div>

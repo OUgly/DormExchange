@@ -1,84 +1,123 @@
 'use client'
 
-// Form used for creating a new listing.
-import { useState, FormEvent } from 'react'
+import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabaseClient'
-import Input from './ui/Input'
-import Button from './ui/Button'
 
 export default function ListingForm() {
   const router = useRouter()
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [price, setPrice] = useState('')
-  const [imageFile, setImageFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    title: '',
+    price: '',
+    category: 'Books',
+    condition: 'New',
+    campus: '',
+    description: '',
+    imageUrls: '',
+  })
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target
+    setForm((f) => ({ ...f, [name]: value }))
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setLoading(true)
-
-    // Upload the image to Supabase Storage if provided.
-    let imageUrl: string | null = null
-    if (imageFile) {
-      const { data, error } = await supabase.storage
-        .from('listing-images')
-        .upload(`public/${Date.now()}-${imageFile.name}`, imageFile)
-      if (!error && data) {
-        const { data: url } = supabase.storage
-          .from('listing-images')
-          .getPublicUrl(data.path)
-        imageUrl = url.publicUrl
-      }
-    }
-
-    const user = (await supabase.auth.getUser()).data.user
-
-    // Insert the listing into the database.
-    const { error } = await supabase.from('listings').insert({
-      title,
-      description,
-      price: Number(price),
-      image_url: imageUrl,
-      user_id: user?.id,
+    const res = await fetch('/api/listings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: form.title,
+        price: Number(form.price),
+        category: form.category,
+        condition: form.condition,
+        campus: form.campus,
+        description: form.description,
+        imageUrls: form.imageUrls.split(',').map((s) => s.trim()).filter(Boolean),
+      }),
     })
-
     setLoading(false)
-    if (!error) {
+    if (res.ok) {
       router.push('/')
     }
   }
 
+  const inputClass =
+    'w-full rounded-md border border-line bg-muted p-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent'
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <Input
+      <input
+        name="title"
         placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        value={form.title}
+        onChange={handleChange}
         required
-      />
-      <textarea
-        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <Input
-        type="number"
-        placeholder="Price"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-        required
+        className={inputClass}
       />
       <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+        name="price"
+        type="number"
+        placeholder="Price"
+        value={form.price}
+        onChange={handleChange}
+        required
+        className={inputClass}
       />
-      <Button type="submit" disabled={loading}>
+      <select
+        name="category"
+        value={form.category}
+        onChange={handleChange}
+        className={inputClass}
+      >
+        <option>Books</option>
+        <option>Furniture</option>
+        <option>Electronics</option>
+        <option>Clothing</option>
+      </select>
+      <select
+        name="condition"
+        value={form.condition}
+        onChange={handleChange}
+        className={inputClass}
+      >
+        <option>New</option>
+        <option>Like New</option>
+        <option>Good</option>
+        <option>Used</option>
+      </select>
+      <input
+        name="campus"
+        placeholder="Campus"
+        value={form.campus}
+        onChange={handleChange}
+        className={inputClass}
+      />
+      <textarea
+        name="description"
+        placeholder="Description"
+        value={form.description}
+        onChange={handleChange}
+        className={inputClass}
+        rows={4}
+      />
+      <input
+        name="imageUrls"
+        placeholder="Image URLs (comma separated)"
+        value={form.imageUrls}
+        onChange={handleChange}
+        className={inputClass}
+      />
+      <button
+        type="submit"
+        disabled={loading}
+        className="rounded-md bg-accent px-4 py-2 text-white disabled:opacity-50"
+      >
         {loading ? 'Saving...' : 'Save'}
-      </Button>
+      </button>
     </form>
   )
 }

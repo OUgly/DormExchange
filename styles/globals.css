@@ -3,3 +3,16 @@
 @tailwind utilities;
 
 /* Add any global styles here */
+
+@layer base {
+  input,
+  textarea,
+  select,
+  button {
+    @apply bg-muted border border-line text-white rounded-md;
+  }
+
+  button {
+    @apply cursor-pointer;
+  }
+}
