@@ -21,6 +21,9 @@ export default function HomePage() {
           <p className="text-neutral-300">Find great deals from fellow students</p>
         </section>
         <FilterPills value={category} onChange={setCategory} />
+        
+        <div className="bg-panel text-accent p-6 rounded-2xl">Tailwind OK?</div>
+
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
           {listings.map((item) => (
             <ListingCard
