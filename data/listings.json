@@ -7,7 +7,7 @@
     "condition": "Used",
     "description": "Good condition calculus textbook with minimal notes.",
     "imageUrls": ["https://images.unsplash.com/photo-1512820790803-83ca734da794"],
-    "campus": "North",
+    "campus": "UAlbany",
     "createdAt": "2025-01-01T12:00:00Z",
     "featured": true
   },
@@ -19,7 +19,7 @@
     "condition": "Like New",
     "description": "LED desk lamp with adjustable brightness.",
     "imageUrls": ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b"],
-    "campus": "South",
+    "campus": "UAlbany",
     "createdAt": "2025-01-02T12:00:00Z"
   },
   {
@@ -30,7 +30,7 @@
     "condition": "Used",
     "description": "Compact mini fridge, works perfectly.",
     "imageUrls": ["https://images.unsplash.com/photo-1586190848861-99aa4a171e90"],
-    "campus": "Main",
+    "campus": "UAlbany",
     "createdAt": "2025-01-03T12:00:00Z"
   },
   {
@@ -41,7 +41,7 @@
     "condition": "Used",
     "description": "Sturdy wooden chair for study desk.",
     "imageUrls": ["https://images.unsplash.com/photo-1519710164239-da123dc03ef4"],
-    "campus": "West",
+    "campus": "UAlbany",
     "createdAt": "2025-01-04T12:00:00Z"
   },
   {
@@ -52,7 +52,7 @@
     "condition": "Like New",
     "description": "University branded hoodie, barely worn.",
     "imageUrls": ["https://images.unsplash.com/photo-1520974735194-9dbff1ff18ed"],
-    "campus": "North",
+    "campus": "UAlbany",
     "createdAt": "2025-01-05T12:00:00Z",
     "featured": true
   },
@@ -64,7 +64,7 @@
     "condition": "Used",
     "description": "TI-84 graphing calculator.",
     "imageUrls": ["https://images.unsplash.com/photo-1580584128400-7aaa59b1d19b"],
-    "campus": "South",
+    "campus": "UAlbany",
     "createdAt": "2025-01-06T12:00:00Z"
   },
   {
@@ -75,7 +75,7 @@
     "condition": "Good",
     "description": "Psychology textbook with highlight marks.",
     "imageUrls": ["https://images.unsplash.com/photo-1524578271613-b5f90b6aa3de"],
-    "campus": "Main",
+    "campus": "UAlbany",
     "createdAt": "2025-01-07T12:00:00Z"
   },
   {
@@ -86,7 +86,7 @@
     "condition": "Like New",
     "description": "Metal mesh desk organizer for stationery.",
     "imageUrls": ["https://images.unsplash.com/photo-1524758631624-e2822e304c36"],
-    "campus": "East",
+    "campus": "UAlbany",
     "createdAt": "2025-01-08T12:00:00Z"
   },
   {
@@ -97,7 +97,7 @@
     "condition": "Like New",
     "description": "Portable bluetooth speaker with great sound.",
     "imageUrls": ["https://images.unsplash.com/photo-1519671282429-b44660ead0a7"],
-    "campus": "West",
+    "campus": "UAlbany",
     "createdAt": "2025-01-09T12:00:00Z"
   },
   {
@@ -108,7 +108,7 @@
     "condition": "Used",
     "description": "Ikea study table with minor scratches.",
     "imageUrls": ["https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60"],
-    "campus": "South",
+    "campus": "UAlbany",
     "createdAt": "2025-01-10T12:00:00Z"
   },
   {
@@ -119,7 +119,7 @@
     "condition": "Like New",
     "description": "Warm and cozy jacket for winter.",
     "imageUrls": ["https://images.unsplash.com/photo-1512436991641-6745cdb1723f"],
-    "campus": "Main",
+    "campus": "UAlbany",
     "createdAt": "2025-01-11T12:00:00Z"
   },
   {
@@ -130,7 +130,7 @@
     "condition": "Good",
     "description": "Economic principles textbook, minor wear.",
     "imageUrls": ["https://images.unsplash.com/photo-1526304640581-d334cdbbf45e"],
-    "campus": "East",
+    "campus": "UAlbany",
     "createdAt": "2025-01-12T12:00:00Z"
   }
 ]

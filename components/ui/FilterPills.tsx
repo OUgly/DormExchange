@@ -16,17 +16,17 @@ export default function FilterPills({ value, onChange }: FilterPillsProps) {
   )
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="-mx-2 flex gap-2 overflow-x-auto px-2">
       {categories.map((cat) => {
         const active = value === cat
         return (
           <button
             key={cat}
             onClick={handleClick(cat)}
-            className={`rounded-full border px-3 py-1 text-sm transition-colors ${
+            className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition-colors ${
               active
-                ? 'bg-accent/20 border-accent'
-                : 'border-line bg-muted'
+                ? 'bg-accent/20 border-accent text-white'
+                : 'bg-muted border-line text-neutral-300'
             }`}
           >
             {cat}

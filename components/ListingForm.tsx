@@ -46,10 +46,10 @@ export default function ListingForm() {
   }
 
   const inputClass =
-    'w-full rounded-md border border-line bg-muted p-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent'
+    'w-full rounded-xl border border-line bg-muted px-3 py-2 text-sm text-neutral-300 focus:outline-none focus:border-accent/60 focus:ring-2 focus:ring-accent/50'
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <input
         name="title"
         placeholder="Title"
@@ -101,7 +101,7 @@ export default function ListingForm() {
         placeholder="Description"
         value={form.description}
         onChange={handleChange}
-        className={inputClass}
+        className={`md:col-span-2 ${inputClass}`}
         rows={4}
       />
       <input
@@ -109,15 +109,17 @@ export default function ListingForm() {
         placeholder="Image URLs (comma separated)"
         value={form.imageUrls}
         onChange={handleChange}
-        className={inputClass}
+        className={`md:col-span-2 ${inputClass}`}
       />
-      <button
-        type="submit"
-        disabled={loading}
-        className="rounded-md bg-accent px-4 py-2 text-white disabled:opacity-50"
-      >
-        {loading ? 'Saving...' : 'Save'}
-      </button>
+      <div className="md:col-span-2 flex justify-end">
+        <button
+          type="submit"
+          disabled={loading}
+          className="rounded-xl bg-accent px-4 py-2 text-white hover:bg-accent/90 disabled:opacity-50"
+        >
+          {loading ? 'Saving...' : 'Save'}
+        </button>
+      </div>
     </form>
   )
 }

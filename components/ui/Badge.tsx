@@ -10,11 +10,11 @@ export default function Badge({
   className = '',
   ...props
 }: BadgeProps) {
-  const base = 'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium'
+  const base = 'inline-flex items-center rounded-full border px-2.5 py-1 text-xs'
   const variants = {
-    default: 'bg-muted border border-line text-white',
-    outline: 'border border-line text-white',
-    accent: 'bg-accent text-white',
+    default: 'bg-muted border-line text-neutral-300',
+    outline: 'bg-transparent border-line text-neutral-300',
+    accent: 'bg-accent text-white border-transparent',
   }[variant]
 
   return (
