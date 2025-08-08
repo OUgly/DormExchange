@@ -1,0 +1,37 @@
+{
+  "name": "dormexchange-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "tailwind.config.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OUgly/DormExchange.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OUgly/DormExchange/issues"
+  },
+  "homepage": "https://github.com/OUgly/DormExchange#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.54.0",
+    "next": "^15.4.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.0",
+    "@types/react": "^19.1.9",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.9.2"
+  }
+}
