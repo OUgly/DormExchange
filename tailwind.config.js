@@ -1,3 +1,5 @@
+const { text } = require('stream/consumers');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -8,14 +10,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bg: '#21212bff',
-        panel: '#141417',
-        muted: '#1c1c20',
-        line: '#232329',
-        accent: '#8b5cf6',
+        bg: '#0c232d',
+        panel: '#27343aff',
+        muted: '#2f7a91',
+        line: '#666674ff',
+        accent: '#d9b70d',
+        text: '#b31398ff',
       },
       boxShadow: {
-        card: '0 1px 0 0 #232329, 0 8px 20px rgba(0,0,0,.35)',
+        card: '0 1px 0 0 #1717acff, 0 8px 20px rgba(0, 0, 0, 0.35)',
       },
     },
   },
