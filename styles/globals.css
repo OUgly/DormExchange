@@ -7,9 +7,8 @@
 @layer base {
   input,
   textarea,
-  select,
-  button {
-    @apply bg-muted border border-line text-white rounded-md;
+  select {
+    @apply bg-muted border border-line rounded-xl text-neutral-300 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/60;
   }
 
   button {

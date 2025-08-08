@@ -32,23 +32,22 @@ export default function MessageModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg/80 p-4">
-      <div className="w-full max-w-md rounded-lg border border-line bg-panel p-4">
+      <div className="w-full max-w-md rounded-2xl border border-line bg-panel p-4">
         <h2 className="mb-2 text-lg font-semibold">Message Seller</h2>
         <textarea
-          className="mb-4 w-full rounded-md border border-line bg-muted p-2 text-sm text-white"
-          rows={4}
+          className="mb-4 w-full rounded-xl border border-line bg-muted p-2 text-sm text-neutral-300 focus:outline-none focus:border-accent/60 focus:ring-2 focus:ring-accent/50 min-h-[120px]"
           value={body}
           onChange={(e) => setBody(e.target.value)}
         />
         <div className="flex justify-end gap-2">
           <button
-            className="rounded-md border border-line px-4 py-2 text-sm"
+            className="rounded-xl border border-line px-4 py-2 text-sm text-neutral-300"
             onClick={onClose}
           >
             Cancel
           </button>
           <button
-            className="rounded-md bg-accent px-4 py-2 text-sm text-white disabled:opacity-50"
+            className="rounded-xl bg-accent px-4 py-2 text-sm text-white hover:bg-accent/90 disabled:opacity-50"
             disabled={!body}
             onClick={handleSend}
           >

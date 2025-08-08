@@ -23,7 +23,7 @@ export default function ListingCard({
   return (
     <Link
       href={`/listings/${id}`}
-      className="group overflow-hidden rounded-lg border border-line bg-panel shadow-card"
+      className="group overflow-hidden rounded-2xl border border-line bg-panel shadow-card"
     >
       <div className="relative aspect-video w-full">
         <img src={imageUrl} alt={title} className="h-full w-full object-cover" />
@@ -34,8 +34,8 @@ export default function ListingCard({
           </Badge>
         )}
         <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between gap-2">
-          <h3 className="line-clamp-2 text-sm font-semibold leading-tight">{title}</h3>
-          <span className="rounded-full bg-bg/80 px-2 py-0.5 text-xs font-medium">
+          <h3 className="line-clamp-2 text-sm font-bold leading-tight">{title}</h3>
+          <span className="rounded-full bg-accent/20 px-2 py-0.5 text-xs font-semibold text-accent">
             ${price}
           </span>
         </div>
@@ -45,7 +45,10 @@ export default function ListingCard({
           <Badge variant="outline">{campus}</Badge>
           {condition && <Badge variant="outline">{condition}</Badge>}
         </div>
-        <button className="text-line transition-colors hover:text-accent" aria-label="Save listing">
+        <button
+          className="text-neutral-400 transition-colors hover:text-accent"
+          aria-label="Save listing"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
