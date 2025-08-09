@@ -1,50 +1,32 @@
 'use client'
-// components/Navbar.tsx
-"use client";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase/client'
 
 export default function Navbar() {
-  const router = useRouter();
-  const params = useSearchParams();
-  const [q, setQ] = useState(params.get("q") ?? "");
-
-  useEffect(() => setQ(params.get("q") ?? ""), [params]);
+  const [email, setEmail] = useState<string | null>(null)
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null))
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setEmail(s?.user?.email ?? null))
+    return () => sub.subscription.unsubscribe()
+  }, [])
 
   return (
-    <nav className="sticky top-0 z-40 bg-panel/95 backdrop-blur border-b border-line">
-      <div className="max-w-screen-xl mx-auto px-4 md:px-6 h-16 flex items-center gap-4">
-        <Link href="/" className="font-bold text-xl">DormExchange</Link>
-
-        {/* Search */}
-        <div className="flex-1 flex justify-center">
-          <div className="relative w-full max-w-lg">
-            <span
-              aria-hidden
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
-            >⌕</span>
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  router.replace(q ? `/?q=${encodeURIComponent(q)}` : "/");
-                }
-              }}
-              placeholder="Search…"
-              aria-label="Search listings"
-              className="w-full h-10 bg-muted text-white placeholder:text-neutral-200 placeholder:opacity-90
-                         border border-line rounded-xl pl-9 pr-3
-                         focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/60"
-            />
-          </div>
+    <nav className="w-full py-3 backdrop-blur bg-black/20">
+      <div className="container mx-auto px-4 flex items-center justify-between">
+        <Link href="/" className="font-bold text-lg">DormExchange</Link>
+        <div className="flex items-center gap-3">
+          {email ? (
+            <>
+              <Link href="/market" className="px-3 py-1.5 rounded-xl bg-white/10">Market</Link>
+              <Link href="/profile" className="px-3 py-1.5 rounded-xl bg-white/10">Profile</Link>
+              <button onClick={() => supabase.auth.signOut()} className="px-3 py-1.5 rounded-xl bg-yellow-400 text-black">Sign out</button>
+            </>
+          ) : (
+            <Link href="/campus" className="px-3 py-1.5 rounded-xl bg-yellow-400 text-black">Sign in</Link>
+          )}
         </div>
-
-        <Link href="/auth/login" className="bg-yellow-400 text-black px-4 py-2 rounded-xl hover:bg-yellow-300">
-          Sign In
-        </Link>
       </div>
     </nav>
-  );
+  )
 }

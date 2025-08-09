@@ -2,7 +2,7 @@
 
 // Comment thread for a single listing.
 import { useEffect, useState, FormEvent } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { supabase } from '@/lib/supabase/client'
 import Input from './ui/Input'
 import Button from './ui/Button'
 import { Comment } from '@/types/db'
