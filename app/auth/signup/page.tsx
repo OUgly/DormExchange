@@ -23,9 +23,28 @@ export default function SignUpPage() {
     }
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signUp({ email, password });
+      const searchParams = new URLSearchParams(window.location.search)
+      const next = searchParams.get('next') ?? '/market'
+      const campus = searchParams.get('campus')
+      
+      if (!campus) {
+        throw new Error('Missing campus parameter')
+      }
+
+      const callbackUrl = `/auth/callback?next=${encodeURIComponent(next)}&campus=${encodeURIComponent(campus)}`
+      
+      const { error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          emailRedirectTo: `${location.origin}${callbackUrl}`,
+          data: {
+            campus_slug: campus
+          }
+        }
+      });
       if (error) throw error;
-      router.push('/');
+      location.href = callbackUrl;
     } catch (e: any) {
       setErr(e.message ?? 'Sign up failed');
     } finally {

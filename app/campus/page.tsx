@@ -8,9 +8,15 @@ async function getCampuses() {
   return data ?? []
 }
 
-export default async function CampusPage({ searchParams }: any) {
+// 👇 note the Promise type and the await
+export default async function CampusPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>
+}) {
   const campuses = await getCampuses()
-  const next = searchParams?.next ?? '/market'
+  const sp = await searchParams
+  const next = sp?.next ?? '/market'
 
   return (
     <main className="container mx-auto px-4 py-10">
