@@ -19,7 +19,7 @@
     "condition": "Like New",
     "description": "LED desk lamp with adjustable brightness.",
     "imageUrls": ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b"],
-    "campus": "UAlbany",
+    "campus": "Babson",
     "createdAt": "2025-01-02T12:00:00Z"
   },
   {
@@ -30,7 +30,7 @@
     "condition": "Used",
     "description": "Compact mini fridge, works perfectly.",
     "imageUrls": ["https://images.unsplash.com/photo-1586190848861-99aa4a171e90"],
-    "campus": "UAlbany",
+    "campus": "NYU",
     "createdAt": "2025-01-03T12:00:00Z"
   },
   {
@@ -41,7 +41,7 @@
     "condition": "Used",
     "description": "Sturdy wooden chair for study desk.",
     "imageUrls": ["https://images.unsplash.com/photo-1519710164239-da123dc03ef4"],
-    "campus": "UAlbany",
+    "campus": "Babson",
     "createdAt": "2025-01-04T12:00:00Z"
   },
   {

@@ -1,68 +1,50 @@
 'use client'
-
-// Simple navigation bar displayed on every page.
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+// components/Navbar.tsx
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Navbar() {
-  const [session, setSession] = useState<any>(null)
+  const router = useRouter();
+  const params = useSearchParams();
+  const [q, setQ] = useState(params.get("q") ?? "");
 
-  // Check auth state on mount and subscribe to changes.
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
-    const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
-      setSession(session)
-    })
-    return () => {
-      listener.subscription.unsubscribe()
-    }
-  }, [])
+  useEffect(() => setQ(params.get("q") ?? ""), [params]);
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-line bg-panel">
-      <div className="mx-auto flex h-16 max-w-screen-xl items-center justify-between px-4 md:px-6">
-        <Link href="/" className="text-xl font-bold">
-          DormExchange
-        </Link>
-        <div className="flex flex-1 justify-center px-4">
-          <div className="relative w-full max-w-[320px]">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+    <nav className="sticky top-0 z-40 bg-panel/95 backdrop-blur border-b border-line">
+      <div className="max-w-screen-xl mx-auto px-4 md:px-6 h-16 flex items-center gap-4">
+        <Link href="/" className="font-bold text-xl">DormExchange</Link>
+
+        {/* Search */}
+        <div className="flex-1 flex justify-center">
+          <div className="relative w-full max-w-lg">
+            <span
+              aria-hidden
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+            >⌕</span>
             <input
-              type="text"
-              placeholder="Search..."
-              className="w-full rounded-xl border border-line bg-muted pl-10 py-2 text-sm focus:outline-none focus:border-accent/60 focus:ring-2 focus:ring-accent/50"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  router.replace(q ? `/?q=${encodeURIComponent(q)}` : "/");
+                }
+              }}
+              placeholder="Search…"
+              aria-label="Search listings"
+              className="w-full h-10 bg-muted text-white placeholder:text-neutral-200 placeholder:opacity-90
+                         border border-line rounded-xl pl-9 pr-3
+                         focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/60"
             />
           </div>
         </div>
-        <div>
-          {session ? (
-            <Link
-              href="#"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-muted"
-            >
-              <span className="sr-only">Account</span>
-            </Link>
-          ) : (
-            <Link
-              href="/auth/login"
-              className="rounded-xl bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90"
-            >
-              Sign In
-            </Link>
-          )}
-        </div>
+
+        <Link href="/auth/login" className="bg-yellow-400 text-black px-4 py-2 rounded-xl hover:bg-yellow-300">
+          Sign In
+        </Link>
       </div>
     </nav>
-  )
+  );
 }
