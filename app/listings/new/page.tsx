@@ -1,7 +1,7 @@
 'use client'
 
 // Page for creating a new listing.
-import ListingForm from '@/components/ListingForm'
+import { ListingForm } from '@/components/ListingForm'
 
 export default function NewListingPage() {
   return (

@@ -1,125 +1,90 @@
-'use client'
+'use client';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import Input from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
 
-import { FormEvent, useState } from 'react'
-import { useRouter } from 'next/navigation'
-
-export default function ListingForm() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
+export const ListingForm = () => {
+  const router = useRouter();
   const [form, setForm] = useState({
     title: '',
-    price: '',
-    category: 'Books',
-    condition: 'New',
-    campus: '',
     description: '',
-    imageUrls: '',
-  })
+    price: '' as string | number,
+    imageFile: null as File | null,
+  });
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target
-    setForm((f) => ({ ...f, [name]: value }))
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const priceNum = Number(form.price);
+    if (!form.title.trim()) return alert('Title is required.');
+    if (Number.isNaN(priceNum) || priceNum < 0) return alert('Price must be ≥ 0.');
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    const res = await fetch('/api/listings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title: form.title,
-        price: Number(form.price),
-        category: form.category,
-        condition: form.condition,
-        campus: form.campus,
-        description: form.description,
-        imageUrls: form.imageUrls.split(',').map((s) => s.trim()).filter(Boolean),
-      }),
-    })
-    setLoading(false)
-    if (res.ok) {
-      router.push('/')
+    try {
+      setSubmitting(true);
+      let imageUrl: string | null = null;
+
+      if (form.imageFile) {
+        const fileName = crypto.randomUUID();
+        const { data: up, error: upErr } = await supabase
+          .storage
+          .from('listing-images')
+          .upload(fileName, form.imageFile, { cacheControl: '3600', upsert: false });
+        if (upErr) throw upErr;
+
+        const { data: pub } = supabase.storage.from('listing-images').getPublicUrl(up!.path);
+        imageUrl = pub.publicUrl;
+      }
+
+      const { error: insErr } = await supabase.from('listings').insert({
+        title: form.title.trim(),
+        description: form.description?.trim() || '',
+        price: priceNum,
+        image_url: imageUrl,
+      });
+      if (insErr) throw insErr;
+
+      alert('Listing created!');
+      router.push('/');
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message ?? 'Error creating listing');
+    } finally {
+      setSubmitting(false);
     }
-  }
-
-  const inputClass =
-    'w-full rounded-xl border border-line bg-muted px-3 py-2 text-sm text-neutral-300 focus:outline-none focus:border-accent/60 focus:ring-2 focus:ring-accent/50'
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <input
-        name="title"
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Input
         placeholder="Title"
         value={form.title}
-        onChange={handleChange}
+        onChange={(e) => setForm({ ...form, title: e.target.value })}
         required
-        className={inputClass}
-      />
-      <input
-        name="price"
-        type="number"
-        placeholder="Price"
-        value={form.price}
-        onChange={handleChange}
-        required
-        className={inputClass}
-      />
-      <select
-        name="category"
-        value={form.category}
-        onChange={handleChange}
-        className={inputClass}
-      >
-        <option>Books</option>
-        <option>Furniture</option>
-        <option>Electronics</option>
-        <option>Clothing</option>
-      </select>
-      <select
-        name="condition"
-        value={form.condition}
-        onChange={handleChange}
-        className={inputClass}
-      >
-        <option>New</option>
-        <option>Like New</option>
-        <option>Good</option>
-        <option>Used</option>
-      </select>
-      <input
-        name="campus"
-        placeholder="Campus"
-        value={form.campus}
-        onChange={handleChange}
-        className={inputClass}
       />
       <textarea
-        name="description"
+        className="h-28 w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:outline-none"
         placeholder="Description"
         value={form.description}
-        onChange={handleChange}
-        className={`md:col-span-2 ${inputClass}`}
-        rows={4}
+        onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
-      <input
-        name="imageUrls"
-        placeholder="Image URLs (comma separated)"
-        value={form.imageUrls}
-        onChange={handleChange}
-        className={`md:col-span-2 ${inputClass}`}
+      <Input
+        type="number"
+        step="0.01"
+        placeholder="Price (USD)"
+        value={form.price}
+        onChange={(e) => setForm({ ...form, price: e.target.value })}
+        required
       />
-      <div className="md:col-span-2 flex justify-end">
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded-xl bg-accent px-4 py-2 text-white hover:bg-accent/90 disabled:opacity-50"
-        >
-          {loading ? 'Saving...' : 'Save'}
-        </button>
-      </div>
+      <Input
+        type="file"
+        accept="image/*"
+        onChange={(e) => setForm({ ...form, imageFile: e.target.files?.[0] || null })}
+      />
+      <Button type="submit" disabled={submitting}>
+        {submitting ? 'Saving…' : 'Create Listing'}
+      </Button>
     </form>
-  )
-}
+  );
+};
