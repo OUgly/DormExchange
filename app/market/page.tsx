@@ -1,89 +1,69 @@
 import { redirect } from 'next/navigation'
 import { requireAuthAndCampus } from '@/lib/guards'
-import { createServerSupabase } from '@/lib/supabase/server'
-import Image from 'next/image'
-import Link from 'next/link'
-import FavButton from './FavButton'
-import stockListings from '@/data/listings.json'
+import ListingCard from '@/components/ListingCard'
+import MarketFilters from './MarketFilters'
+import type { Metadata } from 'next'
+import { unstable_noStore as noStore } from 'next/cache'
 
-export default async function MarketPage() {
-  const { user, campus } = await requireAuthAndCampus()
-  if (!user) redirect('/auth?next=/market')
+export const metadata: Metadata = { title: 'Market • DormExchange' }
+
+type SearchParams = {
+  q?: string
+  category?: string
+  condition?: string
+  min?: string
+  max?: string
+}
+
+export default async function MarketPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  noStore();
+
+  const { user, campus, supabase } = await requireAuthAndCampus()
+  if (!user) redirect('/login')
   if (!campus) redirect('/campus')
 
-  const supabase = await createServerSupabase()
-  const { data: campusRow } = await supabase
-    .from('campuses')
-    .select('id')
-    .eq('slug', campus)
-    .maybeSingle()
-  const campusId = campusRow?.id
+  const params = await searchParams
 
-  const { data: listings } = await supabase
+  let query = supabase
     .from('listings')
-    .select('id, title, price_cents, image_url, condition')
-    .eq('campus_id', campusId)
+    .select('id,title,price,condition,image_url,category')
+    .eq('campus_slug', campus)
+    .eq('status', 'active')
     .order('created_at', { ascending: false })
+    .limit(60)
 
-  const { data: favs } = await supabase
-    .from('favorites')
-    .select('listing_id')
-    .eq('user_id', user.id)
-  const favSet = new Set((favs ?? []).map((f) => f.listing_id))
-
-  let display = listings ?? []
-  let showFav = true
-  if (!display.length) {
-    display = (stockListings as any[])
-      .filter(
-        (l) =>
-          l.campus &&
-          l.campus.toLowerCase().replace(/\s+/g, '-') === campus
-      )
-      .map((l) => ({
-        id: l.id,
-        title: l.title,
-        price_cents: (l.price ?? 0) * 100,
-        image_url: l.imageUrls?.[0] ?? null,
-        condition: l.condition,
-      }))
-    showFav = false
+  const q = (params.q ?? '').trim()
+  if (q) {
+    // simple text search across title/description via ilike
+    query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`)
   }
+  if (params.category) query = query.eq('category', params.category)
+  if (params.condition) query = query.eq('condition', params.condition)
+  if (params.min) query = query.gte('price', Number(params.min))
+  if (params.max) query = query.lte('price', Number(params.max))
+
+  const { data: listings, error } = await query
+  if (error) throw new Error(error.message)
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Buy & Sell on Campus</h1>
-        <Link href="/profile" className="rounded-xl bg-white/10 px-4 py-2">Profile</Link>
-      </div>
+    <main className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <header className="flex items-center justify-between gap-4">
+        <h1 className="text-3xl font-semibold">Buy &amp; Sell on Campus</h1>
+      </header>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {display.map((l) => (
-          <ListingCard key={l.id} listing={l} isFav={favSet.has(l.id)} showFav={showFav} />
-        ))}
-      </div>
+      <MarketFilters />
+
+      {!listings?.length ? (
+        <div className="rounded-2xl bg-surface/40 p-8 text-center">
+          <p className="text-lg">No listings yet for this campus.</p>
+          <p className="opacity-80">Try adjusting filters or be the first to post a listing.</p>
+        </div>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {listings.map((l) => <ListingCard key={l.id} listing={l} />)}
+        </div>
+      )}
     </main>
   )
 }
 
-function Price({ cents }: { cents: number }) {
-  return <span>${(cents / 100).toFixed(0)}</span>
-}
-
-function ListingCard({ listing, isFav, showFav }: { listing: any; isFav: boolean; showFav: boolean }) {
-  return (
-    <div className="rounded-2xl overflow-hidden bg-white/5 border border-white/10">
-      <div className="relative h-44">
-        <Image src={listing.image_url || '/placeholder.jpg'} alt={listing.title} fill className="object-cover" />
-      </div>
-      <div className="p-4 flex items-start justify-between gap-3">
-        <div>
-          <div className="font-semibold">{listing.title}</div>
-          <div className="text-sm opacity-80">{listing.condition}</div>
-          <div className="mt-1 font-bold"><Price cents={listing.price_cents} /></div>
-        </div>
-        {showFav && <FavButton listingId={listing.id} initial={isFav} />}
-      </div>
-    </div>
-  )
-}

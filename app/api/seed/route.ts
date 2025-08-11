@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
-import { createServerSupabase } from '@/lib/supabase/server'
+import { getSupabaseServer } from '@/lib/supabase/server'
 
 export async function POST(req: Request) {
   const token = req.headers.get('authorization')?.replace('Bearer ', '')
   if (token !== process.env.SEED_TOKEN) return new NextResponse('forbidden', { status: 403 })
 
-  const supabase = await createServerSupabase()
+  const supabase = await getSupabaseServer()
   const { data: campuses } = await supabase.from('campuses').select('id, slug').limit(1)
   const campusId = campuses?.[0]?.id
   if (!campusId) return new NextResponse('no campus', { status: 400 })
