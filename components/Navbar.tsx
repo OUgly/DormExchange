@@ -38,8 +38,7 @@ export default function Navbar() {
               <button
                 onClick={async () => {
                   await supabase.auth.signOut()
-                  window.location.href = '/campus' // force reload after sign-out
-                  window.location.href = '/campus' // force reload after sign-out
+                  window.location.href = '/' // Redirect to home, middleware will handle the rest
                 }}
                 className="px-3 py-1.5 rounded-xl bg-yellow-400 text-black"
               >
