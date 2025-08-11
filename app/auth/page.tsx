@@ -8,9 +8,9 @@ const GRADES = ['Freshman','Sophomore','Junior','Senior','Graduate','Other'] as 
 export default function AuthPage() {
   const params = useSearchParams()
   const router = useRouter()
-  const campusSlug = params.get('campus') ?? ''
   const next = params.get('next') ?? '/market'
 
+  const [campusSlug, setCampusSlug] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -20,8 +20,13 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState<string | null>(null)
 
-  // load allowed email domains for selected campus
   useEffect(() => {
+    const match = document.cookie.match(/(?:^|; )dx-campus=([^;]*)/)
+    setCampusSlug(match ? decodeURIComponent(match[1]) : '')
+  }, [])
+
+  useEffect(() => {
+    if (!campusSlug) return
     async function run() {
       const { data, error } = await supabase
         .from('campuses')
@@ -41,28 +46,34 @@ export default function AuthPage() {
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault()
     setMsg(null)
-
     if (!domainOk) return setMsg(`Use your school email (${campusDomains.join(', ')})`)
     if (!pwMatch) return setMsg('Passwords do not match.')
     if (!username) return setMsg('Choose a username.')
     if (!grade) return setMsg('Select your school year.')
-
     setLoading(true)
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        // we’ll read these in /auth/callback to create the profile row
         data: { username, grade, campus_slug: campusSlug },
         emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
     })
     setLoading(false)
-
     if (error) return setMsg(error.message)
-
-    // Always go through the callback so profile is created there
-    location.href = `/auth/callback?next=${encodeURIComponent(next)}`
+    const session = data.session
+    if (session) {
+      await fetch(`/auth/callback?next=${encodeURIComponent(next)}`, {
+        method: 'POST',
+        headers: {
+          'x-sb-access-token': session.access_token,
+          'x-sb-refresh-token': session.refresh_token,
+        },
+      })
+      router.push(next)
+    } else {
+      setMsg('Check your email for a confirmation link to finish sign-up.')
+    }
   }
 
   return (

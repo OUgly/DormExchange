@@ -21,34 +21,28 @@ export default function Navbar() {
           DormExchange
         </Link>
         <div className="flex items-center gap-3">
+          <Link href="/market" className="px-3 py-1.5 rounded-xl bg-white/10">
+            Market
+          </Link>
+          <Link href="/profile" className="px-3 py-1.5 rounded-xl bg-white/10">
+            Profile
+          </Link>
+          <Link href="/campus" className="px-3 py-1.5 rounded-xl bg-white/10">
+            Change campus
+          </Link>
           {email ? (
-            <>
-              <Link
-                href="/market"
-                className="px-3 py-1.5 rounded-xl bg-white/10"
-              >
-                Market
-              </Link>
-              <Link
-                href="/profile"
-                className="px-3 py-1.5 rounded-xl bg-white/10"
-              >
-                Profile
-              </Link>
-              <button
-                onClick={async () => {
-                  await supabase.auth.signOut()
-                  window.location.href = '/campus' // force reload after sign-out
-                  window.location.href = '/campus' // force reload after sign-out
-                }}
-                className="px-3 py-1.5 rounded-xl bg-yellow-400 text-black"
-              >
-                Sign out
-              </button>
-            </>
+            <button
+              onClick={async () => {
+                await supabase.auth.signOut()
+                window.location.href = '/'
+              }}
+              className="px-3 py-1.5 rounded-xl bg-yellow-400 text-black"
+            >
+              Sign out
+            </button>
           ) : (
             <Link
-              href="/campus"
+              href="/auth/signin"
               className="px-3 py-1.5 rounded-xl bg-yellow-400 text-black"
             >
               Sign in

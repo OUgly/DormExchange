@@ -12,9 +12,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-bg text-white antialiased">
+      <body className="flex min-h-screen flex-col bg-bg text-white antialiased">
         <Navbar />
-        {children}
+        <main className="flex-1">{children}</main>
         <Footer /> {/* ⬅️ render Footer after page content */}
       </body>
     </html>

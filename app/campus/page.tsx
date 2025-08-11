@@ -1,47 +1,58 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { createServerSupabase } from '@/lib/supabase/server'
+'use client'
 
-async function getCampuses() {
-  const supabase = await createServerSupabase()
-  const { data } = await supabase.from('campuses').select('id, name, slug, hero_image_url')
-  return data ?? []
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase/client'
+
+interface Campus {
+  slug: string
+  name: string
+  hero_image_url: string | null
 }
 
-// 👇 note the Promise type and the await
-export default async function CampusPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ next?: string }>
-}) {
-  const campuses = await getCampuses()
-  const sp = await searchParams
-  const next = sp?.next ?? '/market'
+export default function CampusPage() {
+  const router = useRouter()
+  const [campuses, setCampuses] = useState<Campus[]>([])
+
+  useEffect(() => {
+    supabase
+      .from('campuses')
+      .select('name, slug, hero_image_url')
+      .then(({ data }) => setCampuses(data ?? []))
+  }, [])
+
+  async function choose(slug: string) {
+    await fetch('/api/campus', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug }),
+    })
+    router.push('/market')
+  }
 
   return (
     <main className="container mx-auto px-4 py-10">
-      <h1 className="text-4xl font-bold mb-6">Choose your campus</h1>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <h1 className="mb-6 text-center text-4xl font-bold">Choose your campus</h1>
+      <ul className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         {campuses.map((c) => (
-          <Link
-            key={c.id}
-            href={`/auth?campus=${c.slug}&next=${encodeURIComponent(next)}`}
-            className="group relative h-52 rounded-2xl overflow-hidden shadow hover:shadow-lg transition"
-          >
-            <Image
-              src={c.hero_image_url ?? '/placeholder.jpg'}
-              alt={c.name}
-              fill
-              className="object-cover opacity-80 group-hover:opacity-90"
-            />
-            <div className="absolute inset-0 bg-black/40" />
-            <div className="absolute bottom-0 p-4">
-              <h2 className="text-2xl font-semibold">{c.name}</h2>
-              <p className="text-sm opacity-80">Tap to continue</p>
-            </div>
-          </Link>
+          <li key={c.slug}>
+            <button
+              onClick={() => choose(c.slug)}
+              className="w-full overflow-hidden rounded-xl text-left">
+              {c.hero_image_url && (
+                <img
+                  src={c.hero_image_url}
+                  alt={c.name}
+                  className="h-32 w-full object-cover"
+                />
+              )}
+              <div className="px-4 py-3 bg-white/10 transition hover:bg-white/20">
+                {c.name}
+              </div>
+            </button>
+          </li>
         ))}
-      </div>
+      </ul>
     </main>
   )
 }
