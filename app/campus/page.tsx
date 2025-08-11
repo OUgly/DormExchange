@@ -1,14 +1,25 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase/client'
 
-const CAMPUSES = [
-  { slug: 'demo-university', name: 'Demo University' },
-  { slug: 'example-college', name: 'Example College' },
-]
+interface Campus {
+  slug: string
+  name: string
+  hero_image_url: string | null
+}
 
 export default function CampusPage() {
   const router = useRouter()
+  const [campuses, setCampuses] = useState<Campus[]>([])
+
+  useEffect(() => {
+    supabase
+      .from('campuses')
+      .select('name, slug, hero_image_url')
+      .then(({ data }) => setCampuses(data ?? []))
+  }, [])
 
   async function choose(slug: string) {
     await fetch('/api/campus', {
@@ -21,15 +32,23 @@ export default function CampusPage() {
 
   return (
     <main className="container mx-auto px-4 py-10">
-      <h1 className="text-4xl font-bold mb-6">Choose your campus</h1>
-      <ul className="space-y-4">
-        {CAMPUSES.map((c) => (
+      <h1 className="mb-6 text-center text-4xl font-bold">Choose your campus</h1>
+      <ul className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+        {campuses.map((c) => (
           <li key={c.slug}>
             <button
               onClick={() => choose(c.slug)}
-              className="w-full text-left px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition"
-            >
-              {c.name}
+              className="w-full overflow-hidden rounded-xl text-left">
+              {c.hero_image_url && (
+                <img
+                  src={c.hero_image_url}
+                  alt={c.name}
+                  className="h-32 w-full object-cover"
+                />
+              )}
+              <div className="px-4 py-3 bg-white/10 transition hover:bg-white/20">
+                {c.name}
+              </div>
             </button>
           </li>
         ))}
