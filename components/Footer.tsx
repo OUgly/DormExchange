@@ -2,7 +2,7 @@
 // components/Footer.tsx
 export default function Footer() {
   return (
-    <footer className="mt-16 border-t border-line bg-panel">
+    <footer className="mt-auto border-t border-line bg-panel">
       <div className="max-w-screen-xl mx-auto px-4 md:px-6 py-10 grid gap-8 md:grid-cols-4 text-sm">
         <div>
           <div className="font-bold text-lg">DormExchange</div>

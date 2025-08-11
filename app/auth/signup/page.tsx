@@ -1,67 +1,152 @@
-'use client';
-import { supabase } from '@/lib/supabaseClient';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
+'use client'
+import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase/client'
 
-const REQUIRE_EDU = process.env.NEXT_PUBLIC_REQUIRE_EDU === 'true';
+const GRADES = ['Freshman','Sophomore','Junior','Senior','Graduate','Other'] as const
 
-export default function SignUpPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [err, setErr] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+export default function AuthPage() {
+  const params = useSearchParams()
+  const router = useRouter()
+  const next = params.get('next') ?? '/market'
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErr(null);
-    if (REQUIRE_EDU && !email.trim().toLowerCase().endsWith('.edu')) {
-      setErr('Please use your .edu email to sign up.');
-      return;
+  const [campusSlug, setCampusSlug] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [username, setUsername] = useState('')
+  const [grade, setGrade] = useState<(typeof GRADES)[number] | ''>('')
+  const [campusDomains, setCampusDomains] = useState<string[]>([])
+  const [loading, setLoading] = useState(false)
+  const [msg, setMsg] = useState<string | null>(null)
+
+  useEffect(() => {
+    const match = document.cookie.match(/(?:^|; )dx-campus=([^;]*)/)
+    setCampusSlug(match ? decodeURIComponent(match[1]) : '')
+  }, [])
+
+  useEffect(() => {
+    if (!campusSlug) return
+    async function run() {
+      const { data, error } = await supabase
+        .from('campuses')
+        .select('allowed_domains')
+        .eq('slug', campusSlug)
+        .maybeSingle()
+      if (error || !data) return setCampusDomains([])
+      setCampusDomains(data.allowed_domains as string[])
     }
-    try {
-      setLoading(true);
-      const searchParams = new URLSearchParams(window.location.search)
-      const next = searchParams.get('next') ?? '/market'
-      const campus = searchParams.get('campus')
-      
-      if (!campus) {
-        throw new Error('Missing campus parameter')
-      }
+    run()
+  }, [campusSlug])
 
-      const callbackUrl = `/auth/callback?next=${encodeURIComponent(next)}&campus=${encodeURIComponent(campus)}`
-      
-      const { error } = await supabase.auth.signUp({ 
-        email, 
-        password,
-        options: {
-          emailRedirectTo: `${location.origin}${callbackUrl}`,
-          data: {
-            campus_slug: campus
-          }
-        }
-      });
-      if (error) throw error;
-      location.href = callbackUrl;
-    } catch (e: any) {
-      setErr(e.message ?? 'Sign up failed');
-    } finally {
-      setLoading(false);
+  const emailDomain = useMemo(() => email.split('@')[1]?.toLowerCase() ?? '', [email])
+  const domainOk = campusDomains.length === 0 || campusDomains.includes(emailDomain)
+  const pwMatch = password.length > 0 && password === confirm
+
+  async function handleSignUp(e: React.FormEvent) {
+    e.preventDefault()
+    setMsg(null)
+    if (!domainOk) return setMsg(`Use your school email (${campusDomains.join(', ')})`)
+    if (!pwMatch) return setMsg('Passwords do not match.')
+    if (!username) return setMsg('Choose a username.')
+    if (!grade) return setMsg('Select your school year.')
+    setLoading(true)
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { username, grade, campus_slug: campusSlug },
+        emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      },
+    })
+    setLoading(false)
+    if (error) return setMsg(error.message)
+    const session = data.session
+    if (session) {
+      await fetch(`/auth/callback?next=${encodeURIComponent(next)}`, {
+        method: 'POST',
+        headers: {
+          'x-sb-access-token': session.access_token,
+          'x-sb-refresh-token': session.refresh_token,
+        },
+      })
+      router.push(next)
+    } else {
+      setMsg('Check your email for a confirmation link to finish sign-up.')
     }
-  };
+  }
 
   return (
-    <div className="mx-auto max-w-sm rounded-xl bg-white p-6 shadow-sm">
-      <h1 className="mb-1 text-2xl font-semibold">Create account</h1>
-      <p className="mb-4 text-sm text-gray-600">Join your campus marketplace.</p>
-      <form onSubmit={onSubmit} className="space-y-4">
-        <Input type="email" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} required />
-        <Input type="password" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} required />
-        {err && <p className="text-sm text-red-600">{err}</p>}
-        <Button type="submit" disabled={loading}>{loading ? 'Creating…' : 'Sign up'}</Button>
+    <main className="container mx-auto px-4 py-10 max-w-md">
+      <h1 className="text-3xl font-bold mb-2">Create your account</h1>
+      <p className="opacity-80 mb-6">Campus: <span className="font-medium">{campusSlug}</span></p>
+
+      <form onSubmit={handleSignUp} className="space-y-4">
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={`yourname@${campusDomains[0] ?? 'school.edu'}`}
+          className={`w-full rounded-xl px-4 py-3 bg-white/10 outline-none placeholder:opacity-70 ${domainOk || !email ? '' : 'ring-2 ring-red-500'}`}
+        />
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <input
+            type="password"
+            required
+            minLength={8}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password (min 8 chars)"
+            className="w-full rounded-xl px-4 py-3 bg-white/10 outline-none placeholder:opacity-70"
+          />
+          <input
+            type="password"
+            required
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            placeholder="Confirm password"
+            className={`w-full rounded-xl px-4 py-3 bg-white/10 outline-none placeholder:opacity-70 ${!confirm || pwMatch ? '' : 'ring-2 ring-red-500'}`}
+          />
+        </div>
+
+        <input
+          type="text"
+          required
+          value={username}
+          onChange={(e) => setUsername(e.target.value.trim())}
+          placeholder="Username"
+          className="w-full rounded-xl px-4 py-3 bg-white/10 outline-none placeholder:opacity-70"
+        />
+
+        <select
+          required
+          value={grade}
+          onChange={(e) => setGrade(e.target.value as any)}
+          className="w-full rounded-xl px-4 py-3 bg-white/10 outline-none"
+        >
+          <option value="" disabled>School year</option>
+          {GRADES.map(g => <option key={g} value={g}>{g}</option>)}
+        </select>
+
+        {!domainOk && email && (
+          <p className="text-sm text-red-400">Use your school email: {campusDomains.join(', ')}</p>
+        )}
+
+        <button
+          disabled={loading}
+          className="w-full rounded-xl px-4 py-3 bg-yellow-400 text-black font-semibold disabled:opacity-60"
+        >
+          {loading ? 'Creating account…' : 'Create account'}
+        </button>
+
+        {msg && <p className="text-sm opacity-80">{msg}</p>}
       </form>
-    </div>
-  );
+      <p className="mt-4 text-sm">
+        Already have an account?{' '}
+        <a href="/auth" className="underline">Sign in</a>
+      </p>
+    </main>
+  )
 }
