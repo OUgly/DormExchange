@@ -1,0 +1,136 @@
+[
+  {
+    "id": "1",
+    "title": "Calculus Textbook",
+    "price": 30,
+    "category": "Books",
+    "condition": "Used",
+    "description": "Good condition calculus textbook with minimal notes.",
+    "imageUrls": ["https://images.unsplash.com/photo-1512820790803-83ca734da794"],
+    "campus": "UAlbany",
+    "createdAt": "2025-01-01T12:00:00Z",
+    "featured": true
+  },
+  {
+    "id": "2",
+    "title": "Dorm Desk Lamp",
+    "price": 15,
+    "category": "Electronics",
+    "condition": "Like New",
+    "description": "LED desk lamp with adjustable brightness.",
+    "imageUrls": ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b"],
+    "campus": "Babson",
+    "createdAt": "2025-01-02T12:00:00Z"
+  },
+  {
+    "id": "3",
+    "title": "Mini Fridge",
+    "price": 80,
+    "category": "Electronics",
+    "condition": "Used",
+    "description": "Compact mini fridge, works perfectly.",
+    "imageUrls": ["https://images.unsplash.com/photo-1586190848861-99aa4a171e90"],
+    "campus": "NYU",
+    "createdAt": "2025-01-03T12:00:00Z"
+  },
+  {
+    "id": "4",
+    "title": "Wooden Study Chair",
+    "price": 25,
+    "category": "Furniture",
+    "condition": "Used",
+    "description": "Sturdy wooden chair for study desk.",
+    "imageUrls": ["https://images.unsplash.com/photo-1519710164239-da123dc03ef4"],
+    "campus": "Babson",
+    "createdAt": "2025-01-04T12:00:00Z"
+  },
+  {
+    "id": "5",
+    "title": "Premium Hoodie",
+    "price": 40,
+    "category": "Clothing",
+    "condition": "Like New",
+    "description": "University branded hoodie, barely worn.",
+    "imageUrls": ["https://images.unsplash.com/photo-1520974735194-9dbff1ff18ed"],
+    "campus": "UAlbany",
+    "createdAt": "2025-01-05T12:00:00Z",
+    "featured": true
+  },
+  {
+    "id": "6",
+    "title": "Graphing Calculator",
+    "price": 60,
+    "category": "Electronics",
+    "condition": "Used",
+    "description": "TI-84 graphing calculator.",
+    "imageUrls": ["https://images.unsplash.com/photo-1580584128400-7aaa59b1d19b"],
+    "campus": "UAlbany",
+    "createdAt": "2025-01-06T12:00:00Z"
+  },
+  {
+    "id": "7",
+    "title": "Intro to Psychology Book",
+    "price": 20,
+    "category": "Books",
+    "condition": "Good",
+    "description": "Psychology textbook with highlight marks.",
+    "imageUrls": ["https://images.unsplash.com/photo-1524578271613-b5f90b6aa3de"],
+    "campus": "UAlbany",
+    "createdAt": "2025-01-07T12:00:00Z"
+  },
+  {
+    "id": "8",
+    "title": "Desk Organizer",
+    "price": 10,
+    "category": "Furniture",
+    "condition": "Like New",
+    "description": "Metal mesh desk organizer for stationery.",
+    "imageUrls": ["https://images.unsplash.com/photo-1524758631624-e2822e304c36"],
+    "campus": "UAlbany",
+    "createdAt": "2025-01-08T12:00:00Z"
+  },
+  {
+    "id": "9",
+    "title": "Bluetooth Speaker",
+    "price": 35,
+    "category": "Electronics",
+    "condition": "Like New",
+    "description": "Portable bluetooth speaker with great sound.",
+    "imageUrls": ["https://images.unsplash.com/photo-1519671282429-b44660ead0a7"],
+    "campus": "UAlbany",
+    "createdAt": "2025-01-09T12:00:00Z"
+  },
+  {
+    "id": "10",
+    "title": "Study Table",
+    "price": 50,
+    "category": "Furniture",
+    "condition": "Used",
+    "description": "Ikea study table with minor scratches.",
+    "imageUrls": ["https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60"],
+    "campus": "UAlbany",
+    "createdAt": "2025-01-10T12:00:00Z"
+  },
+  {
+    "id": "11",
+    "title": "Winter Jacket",
+    "price": 70,
+    "category": "Clothing",
+    "condition": "Like New",
+    "description": "Warm and cozy jacket for winter.",
+    "imageUrls": ["https://images.unsplash.com/photo-1512436991641-6745cdb1723f"],
+    "campus": "UAlbany",
+    "createdAt": "2025-01-11T12:00:00Z"
+  },
+  {
+    "id": "12",
+    "title": "Economics Textbook",
+    "price": 25,
+    "category": "Books",
+    "condition": "Good",
+    "description": "Economic principles textbook, minor wear.",
+    "imageUrls": ["https://images.unsplash.com/photo-1526304640581-d334cdbbf45e"],
+    "campus": "UAlbany",
+    "createdAt": "2025-01-12T12:00:00Z"
+  }
+]

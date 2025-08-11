@@ -1,0 +1,35 @@
+import { createServerSupabase } from '@/lib/supabase/server'
+
+export default async function ProfilePage() {
+  const supabase = await createServerSupabase()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+
+  const [{ data: profile }, { data: favs }] = await Promise.all([
+    supabase.from('profiles').select('full_name, campus_id').eq('id', user.id).maybeSingle(),
+    supabase.from('favorites').select('listing_id, listings(title, price_cents, image_url)').eq('user_id', user.id).returns<any[]>(),
+  ])
+
+  return (
+    <main className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-4">Your Profile</h1>
+      <div className="space-y-6">
+        <section className="bg-white/5 rounded-2xl p-4">
+          <div className="font-semibold">Email</div>
+          <div className="opacity-80">{user.email}</div>
+        </section>
+        <section className="bg-white/5 rounded-2xl p-4">
+          <div className="font-semibold mb-2">Saved Items</div>
+          <ul className="space-y-2">
+            {(favs ?? []).map((f) => (
+              <li key={f.listing_id} className="flex items-center justify-between">
+                <span>{f.listings?.title}</span>
+                <span className="opacity-70">${(f.listings?.price_cents ?? 0) / 100}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
+    </main>
+  )
+}

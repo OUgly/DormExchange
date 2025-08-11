@@ -1,0 +1,21 @@
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+
+export function createServerSupabase() {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return ''  // In server components, we don't need cookie access
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          // Cookie operations are handled by client-side auth
+        },
+        remove(name: string, options: CookieOptions) {
+          // Cookie operations are handled by client-side auth
+        }
+      }
+    }
+  )
+}
