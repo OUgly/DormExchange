@@ -22,6 +22,7 @@ export default function SignInPage() {
 
   useEffect(() => {
     if (!campusSlug) return
+    if (!campusSlug) return
     async function run() {
       const { data, error } = await supabase
         .from('campuses')
@@ -42,7 +43,15 @@ export default function SignInPage() {
     setMsg(null)
     if (!domainOk) return setMsg(`Use your school email (${campusDomains.join(', ')})`)
     setLoading(true)
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        // we’ll read these in /auth/callback to create the profile row
+        data: { username, grade, campus_slug: campusSlug },
+        emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      },
+    })
     setLoading(false)
     if (error) return setMsg(error.message)
     const session = data.session

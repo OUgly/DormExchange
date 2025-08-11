@@ -9,10 +9,17 @@ export default async function ProfilePage() {
   if (!campus) redirect('/campus')
 
   const supabase = await createServerSupabase()
+<<<<<<< HEAD
   const [{ data: profile }, { data: favs }, { data: myListings }] = await Promise.all([
     supabase
       .from('profiles')
       .select('username')
+=======
+  const [{ data: profile }, { data: favs }] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('full_name')
+>>>>>>> dev
       .eq('id', user.id)
       .maybeSingle(),
     supabase
@@ -20,11 +27,14 @@ export default async function ProfilePage() {
       .select('listing_id, listings(title, price_cents, image_url)')
       .eq('user_id', user.id)
       .returns<any[]>(),
+<<<<<<< HEAD
     supabase
       .from('listings')
       .select('id, title, price_cents')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false }),
+=======
+>>>>>>> dev
   ])
 
   return (
