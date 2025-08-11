@@ -22,12 +22,21 @@ export default function CampusPage() {
   }, [])
 
   async function choose(slug: string) {
-    await fetch('/api/campus', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug }),
-    })
-    router.push('/market')
+    try {
+      const response = await fetch('/api/campus', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug }),
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to set campus')
+      }
+      
+      router.push('/auth/signin')
+    } catch (error) {
+      console.error('Failed to set campus:', error)
+    }
   }
 
   return (

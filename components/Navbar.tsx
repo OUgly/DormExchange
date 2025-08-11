@@ -1,10 +1,32 @@
-import Link from 'next/link'
-import { cookies } from 'next/headers'
-import { signOutAction } from '@/app/(auth)/logout/actions'
+'use client'
 
-export default async function Navbar() {
-  const jar = await cookies()
-  const campus = jar.get('dx-campus')?.value
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase/client'
+
+export default function Navbar() {
+  const [campus, setCampus] = useState<string | null>(null)
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    // Get campus from cookie
+    const match = document.cookie.match(/(?:^|; )dx-campus=([^;]*)/)
+    setCampus(match ? decodeURIComponent(match[1]) : null)
+
+    // Get initial auth state
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user)
+    })
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
 
   return (
     <nav className="sticky top-0 z-50 bg-bg/80 backdrop-blur border-b border-white/5">
@@ -17,13 +39,28 @@ export default async function Navbar() {
             </span>
           )}
           <Link href="/market" className="px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10">Market</Link>
-          <Link href="/profile" className="px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10">Profile</Link>
+          {user && (
+            <Link href="/profile" className="px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10">Profile</Link>
+          )}
           <Link href="/campus" className="px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10">Change campus</Link>
-          <form action={signOutAction}>
-            <button type="submit" className="px-3 py-1 rounded-xl bg-yellow-400 text-black hover:brightness-95">
+          {user ? (
+            <button
+              onClick={async () => {
+                await supabase.auth.signOut()
+                window.location.href = '/'
+              }}
+              className="px-3 py-1 rounded-xl bg-yellow-400 text-black hover:brightness-95"
+            >
               Sign out
             </button>
-          </form>
+          ) : (
+            <Link
+              href="/auth/signin"
+              className="px-3 py-1 rounded-xl bg-yellow-400 text-black hover:brightness-95"
+            >
+              Sign in
+            </Link>
+          )}
         </div>
       </div>
     </nav>

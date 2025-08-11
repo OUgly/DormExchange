@@ -3,7 +3,7 @@ import { requireAuthAndCampus } from '@/lib/guards'
 
 export default async function ProfilePage() {
   const { user, campus, supabase } = await requireAuthAndCampus()
-  if (!user) redirect('/login')
+  if (!user) redirect('/auth/signin')
   if (!campus) redirect('/campus')
 
   const [{ data: profile }, { data: favs }, { data: myListings }] = await Promise.all([

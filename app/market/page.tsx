@@ -19,7 +19,7 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
   noStore();
 
   const { user, campus, supabase } = await requireAuthAndCampus()
-  if (!user) redirect('/login')
+  if (!user) redirect('/auth/signin')
   if (!campus) redirect('/campus')
 
   const params = await searchParams
