@@ -42,7 +42,7 @@ export default function Navbar() {
             </button>
           ) : (
             <Link
-              href="/auth"
+              href="/auth/signin"
               className="px-3 py-1.5 rounded-xl bg-yellow-400 text-black"
             >
               Sign in
