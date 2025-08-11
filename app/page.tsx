@@ -1,25 +1,14 @@
-import { redirect } from 'next/navigation'
-import { createServerSupabase } from '@/lib/supabase/server'
-
-export default async function Home() {
-  const supabase = await createServerSupabase()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/campus')
-  }
-
-  // If user is authenticated, check if they have selected a campus
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('campus_id')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  if (!profile?.campus_id) {
-    redirect('/campus')
-  }
-
-  // User is authenticated and has selected a campus
-  redirect('/market')
+export default function Home() {
+  return (
+    <main className="container mx-auto px-4 py-10">
+      <h1 className="text-4xl font-bold mb-6">Welcome to DormExchange</h1>
+      <p className="mb-4">Buy and sell items with other students.</p>
+      <a
+        href="/campus"
+        className="inline-block px-4 py-2 bg-yellow-400 text-black rounded-xl"
+      >
+        Choose your campus
+      </a>
+    </main>
+  )
 }

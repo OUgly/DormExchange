@@ -6,11 +6,10 @@ export async function GET(req: Request) {
   const { searchParams, origin } = new URL(req.url)
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/market'
-  const campus = searchParams.get('campus')
 
   if (!code) {
     console.warn('No auth code in callback')
-    return NextResponse.redirect(`${origin}/campus`)
+    return NextResponse.redirect(`${origin}/`)
   }
 
   const supabase = await createRouteSupabase()
@@ -22,15 +21,9 @@ export async function GET(req: Request) {
 
   if (exchangeError || !session) {
     console.error('Auth callback error:', exchangeError)
-    return NextResponse.redirect(`${origin}/campus`)
+    return NextResponse.redirect(`${origin}/`)
   }
 
-  // Update user metadata with campus if provided
-  if (campus) {
-    await supabase.auth.updateUser({
-      data: { campus_slug: campus }
-    })
-  }
 
   const user = session.user
   const md = (user.user_metadata ?? {}) as {
@@ -82,7 +75,7 @@ export async function POST(req: Request) {
 
   if (!accessToken || !refreshToken) {
     console.warn('No tokens in auth callback')
-    return NextResponse.redirect(`${origin}/campus`)
+    return NextResponse.redirect(`${origin}/`)
   }
 
   const supabase = await createRouteSupabase()
@@ -96,7 +89,7 @@ export async function POST(req: Request) {
 
   if (setError || !session) {
     console.error('Auth callback error:', setError)
-    return NextResponse.redirect(`${origin}/campus`)
+    return NextResponse.redirect(`${origin}/`)
   }
 
   const user = session.user
