@@ -61,8 +61,23 @@ export default function AuthPage() {
 
     if (error) return setMsg(error.message)
 
-    // Always go through the callback so profile is created there
-    location.href = `/auth/callback?next=${encodeURIComponent(next)}`
+    // If we received a session immediately, pass the tokens to the
+    // callback route so that it can set auth cookies and create the
+    // profile row on the server. Otherwise (e.g. email confirmation
+    // required) show a notice to the user.
+    const session = data.session
+    if (session) {
+      await fetch(`/auth/callback?next=${encodeURIComponent(next)}`, {
+        method: 'POST',
+        headers: {
+          'x-sb-access-token': session.access_token,
+          'x-sb-refresh-token': session.refresh_token,
+        },
+      })
+      router.push(next)
+    } else {
+      setMsg('Check your email for a confirmation link to finish sign-up.')
+    }
   }
 
   return (
