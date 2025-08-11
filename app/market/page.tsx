@@ -1,18 +1,22 @@
+import { redirect } from 'next/navigation'
+import { requireAuthAndCampus } from '@/lib/guards'
 import { createServerSupabase } from '@/lib/supabase/server'
 import Image from 'next/image'
 import Link from 'next/link'
 import FavButton from './FavButton'
 
 export default async function MarketPage() {
+  const { user, campus } = await requireAuthAndCampus()
+  if (!user) redirect('/auth?next=/market')
+  if (!campus) redirect('/campus')
+
   const supabase = await createServerSupabase()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) return null
-
-  const { data: profile } = await supabase.from('profiles').select('campus_id').eq('id', user.id).maybeSingle()
-  const campusId = profile?.campus_id
+  const { data: campusRow } = await supabase
+    .from('campuses')
+    .select('id')
+    .eq('slug', campus)
+    .maybeSingle()
+  const campusId = campusRow?.id
 
   const { data: listings } = await supabase
     .from('listings')
@@ -20,7 +24,10 @@ export default async function MarketPage() {
     .eq('campus_id', campusId)
     .order('created_at', { ascending: false })
 
-  const { data: favs } = await supabase.from('favorites').select('listing_id').eq('user_id', user.id)
+  const { data: favs } = await supabase
+    .from('favorites')
+    .select('listing_id')
+    .eq('user_id', user.id)
   const favSet = new Set((favs ?? []).map((f) => f.listing_id))
 
   return (

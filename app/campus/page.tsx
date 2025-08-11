@@ -1,47 +1,39 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { createServerSupabase } from '@/lib/supabase/server'
+'use client'
 
-async function getCampuses() {
-  const supabase = await createServerSupabase()
-  const { data } = await supabase.from('campuses').select('id, name, slug, hero_image_url')
-  return data ?? []
-}
+import { useRouter } from 'next/navigation'
 
-// 👇 note the Promise type and the await
-export default async function CampusPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ next?: string }>
-}) {
-  const campuses = await getCampuses()
-  const sp = await searchParams
-  const next = sp?.next ?? '/market'
+const CAMPUSES = [
+  { slug: 'demo-university', name: 'Demo University' },
+  { slug: 'example-college', name: 'Example College' },
+]
+
+export default function CampusPage() {
+  const router = useRouter()
+
+  async function choose(slug: string) {
+    await fetch('/api/campus', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug }),
+    })
+    router.push('/market')
+  }
 
   return (
     <main className="container mx-auto px-4 py-10">
       <h1 className="text-4xl font-bold mb-6">Choose your campus</h1>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {campuses.map((c) => (
-          <Link
-            key={c.id}
-            href={`/auth?campus=${c.slug}&next=${encodeURIComponent(next)}`}
-            className="group relative h-52 rounded-2xl overflow-hidden shadow hover:shadow-lg transition"
-          >
-            <Image
-              src={c.hero_image_url ?? '/placeholder.jpg'}
-              alt={c.name}
-              fill
-              className="object-cover opacity-80 group-hover:opacity-90"
-            />
-            <div className="absolute inset-0 bg-black/40" />
-            <div className="absolute bottom-0 p-4">
-              <h2 className="text-2xl font-semibold">{c.name}</h2>
-              <p className="text-sm opacity-80">Tap to continue</p>
-            </div>
-          </Link>
+      <ul className="space-y-4">
+        {CAMPUSES.map((c) => (
+          <li key={c.slug}>
+            <button
+              onClick={() => choose(c.slug)}
+              className="w-full text-left px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition"
+            >
+              {c.name}
+            </button>
+          </li>
         ))}
-      </div>
+      </ul>
     </main>
   )
 }
