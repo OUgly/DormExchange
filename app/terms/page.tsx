@@ -3,7 +3,7 @@ export default function Terms() {
   return (
     <div className="prose max-w-2xl">
       <h1>Terms of Service</h1>
-      <p>Use DormExchange responsibly. No banned items. Local, safe transactions.</p>
+      <p>Use DormXchange responsibly. No banned items. Local, safe transactions.</p>
     </div>
   );
 }

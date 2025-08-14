@@ -5,7 +5,7 @@ import MarketFilters from './MarketFilters'
 import type { Metadata } from 'next'
 import { unstable_noStore as noStore } from 'next/cache'
 
-export const metadata: Metadata = { title: 'Market • DormExchange' }
+export const metadata: Metadata = { title: 'Market • DormXchange' }
 
 type SearchParams = {
   q?: string
@@ -59,7 +59,7 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
           <p className="opacity-80">Try adjusting filters or be the first to post a listing.</p>
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-[1600px] mx-auto">
           {listings.map((l) => <ListingCard key={l.id} listing={l} />)}
         </div>
       )}

@@ -10,7 +10,7 @@ export default function Founders() {
             <h2 className="text-2xl font-semibold">The story</h2>
             <p className="opacity-90">
               Hey — we’re <span className="font-semibold">Jake</span> and <span className="font-semibold">Louie</span>.
-              We built DormExchange after hauling sofas up three flights and hunting down rare
+              We built DormXchange after hauling sofas up three flights and hunting down rare
               textbooks in random group chats. We wanted a simple, campus-only marketplace that
               actually felt safe and moved fast.
             </p>
@@ -28,14 +28,20 @@ export default function Founders() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <figure className="rounded-2xl overflow-hidden border border-white/10">
-              <img src="/founders/louie.jpg" alt="Louie" className="h-48 w-full object-cover" />
-              <figcaption className="p-3 text-sm opacity-90">Louie — UAlbany • Cybersecurity → builder</figcaption>
+          <div className="grid grid-cols-2 gap-6">
+            <figure className="rounded-2xl overflow-hidden border border-white/10 bg-surface/20">
+              <img src="/founders/louie.jpg" alt="Louie" className="h-75 w-full object-cover" />
+              <figcaption className="p-5 text-sm opacity-90">
+                <div className="font-semibold mb-2 text-base">Louie</div>
+                <div>UAlbany • Cybersecurity → builder</div>
+              </figcaption>
             </figure>
-            <figure className="rounded-2xl overflow-hidden border border-white/10">
-              <img src="/founders/jake.jpg" alt="Jake" className="h-48 w-full object-cover" />
-              <figcaption className="p-3 text-sm opacity-90">Jake — Babson • Ops & growth</figcaption>
+            <figure className="rounded-2xl overflow-hidden border border-white/10 bg-surface/20">
+              <img src="/founders/jake.jpg" alt="Jake" className="h-75 w-full object-cover" />
+              <figcaption className="p-5 text-sm opacity-90">
+                <div className="font-semibold mb-2 text-base">Jake</div>
+                <div>Babson • Ops & growth</div>
+              </figcaption>
             </figure>
           </div>
         </div>
