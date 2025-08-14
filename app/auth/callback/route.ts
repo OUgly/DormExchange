@@ -1,6 +1,6 @@
 // app/auth/callback/route.ts
 import { NextResponse } from 'next/server'
-import { createRouteSupabase } from '@/lib/supabase/server'
+import { getSupabaseServer } from '@/lib/supabase/server'
 
 export async function GET(req: Request) {
   const { searchParams, origin } = new URL(req.url)
@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     return NextResponse.redirect(`${origin}/`)
   }
 
-  const supabase = await createRouteSupabase()
+  const supabase = await getSupabaseServer()
 
   const {
     data: { session },
@@ -23,7 +23,6 @@ export async function GET(req: Request) {
     console.error('Auth callback error:', exchangeError)
     return NextResponse.redirect(`${origin}/`)
   }
-
 
   const user = session.user
   const md = (user.user_metadata ?? {}) as {
@@ -78,7 +77,7 @@ export async function POST(req: Request) {
     return NextResponse.redirect(`${origin}/`)
   }
 
-  const supabase = await createRouteSupabase()
+  const supabase = await getSupabaseServer()
   const {
     data: { session },
     error: setError,

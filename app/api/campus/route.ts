@@ -6,11 +6,7 @@ export async function POST(req: Request) {
   if (!slug || typeof slug !== 'string') {
     return NextResponse.json({ error: 'Invalid slug' }, { status: 400 })
   }
-  const cookieStore = await cookies()
-  cookieStore.set('dx-campus', slug, {
-    path: '/',
-    sameSite: 'lax',
-    maxAge: 31536000,
-  })
+  const jar = await cookies()
+  jar.set('dx-campus', slug, { path: '/', maxAge: 60*60*24*365, sameSite: 'lax' })
   return NextResponse.json({ ok: true })
 }

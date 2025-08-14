@@ -1,13 +1,11 @@
 import { redirect } from 'next/navigation'
 import { requireAuthAndCampus } from '@/lib/guards'
-import { createServerSupabase } from '@/lib/supabase/server'
 
 export default async function ProfilePage() {
-  const { user, campus } = await requireAuthAndCampus()
-  if (!user) redirect('/auth?next=/profile')
+  const { user, campus, supabase } = await requireAuthAndCampus()
+  if (!user) redirect('/auth/signin')
   if (!campus) redirect('/campus')
 
-  const supabase = await createServerSupabase()
   const [{ data: profile }, { data: favs }, { data: myListings }] = await Promise.all([
     supabase.from('profiles').select('username').eq('id', user.id).maybeSingle(),
     supabase
