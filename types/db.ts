@@ -16,7 +16,18 @@ export interface Listing {
   price: number
   image_url: string | null
   created_at: string
+  status?: string
 }
+
+export interface ListingImage {
+  id: string
+  listing_id: string
+  url: string
+  sort_order: number
+  created_at: string
+}
+
+export type ListingWithImages = Listing & { images: ListingImage[] }
 
 export interface Comment {
   id: string

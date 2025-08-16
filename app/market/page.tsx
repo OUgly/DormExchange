@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { requireAuthAndCampus } from '@/lib/guards'
 import ListingCard from '@/components/ListingCard'
 import MarketFilters from './MarketFilters'
@@ -60,7 +61,11 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
         </div>
       ) : (
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-[1600px] mx-auto">
-          {listings.map((l) => <ListingCard key={l.id} listing={l} />)}
+          {listings.map((l) => (
+            <Link key={l.id} href={`/listing/${l.id}`} className="block">
+              <ListingCard listing={l} />
+            </Link>
+          ))}
         </div>
       )}
     </main>

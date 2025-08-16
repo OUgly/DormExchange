@@ -1,70 +1,75 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { requireAuthAndCampus } from '@/lib/guards'
+import { getSupabaseServer } from '@/lib/supabase/server'
+import { deleteListingImages } from '@/lib/supabase/storage'
+
+async function deleteListing(formData: FormData) {
+  'use server'
+  const id = formData.get('id') as string
+  const supabase = await getSupabaseServer()
+  await deleteListingImages(supabase, id)
+  await supabase.from('listings').delete().eq('id', id)
+  redirect('/profile')
+}
 
 export default async function ProfilePage() {
   const { user, campus, supabase } = await requireAuthAndCampus()
   if (!user) redirect('/auth/signin')
   if (!campus) redirect('/campus')
 
-  const [{ data: profile }, { data: favs }, { data: myListings }] = await Promise.all([
-    supabase.from('profiles').select('username').eq('id', user.id).maybeSingle(),
-    supabase
-      .from('favorites')
-      .select('listing_id, listings(title, price_cents, image_url)')
-      .eq('user_id', user.id)
-      .returns<any[]>(),
-    supabase
-      .from('listings')
-      .select('id, title, price_cents')
-      .eq('user_id', user.id)
-      .returns<any[]>(),
-  ])
+  const { data: myListings } = await supabase
+    .from('listings')
+    .select('id,title,price,image_url,status,created_at')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Your Profile</h1>
-        <a
-          href="/messages"
-          className="rounded-xl bg-white/10 px-4 py-2 font-medium"
-        >
-          Messages
-        </a>
-      </div>
-      <div className="space-y-6">
-        <section className="rounded-2xl bg-white/5 p-4 space-y-2">
-          <div>
-            <div className="font-semibold">Email</div>
-            <div className="opacity-80">{user.email}</div>
+    <main className="container mx-auto px-4 py-8 space-y-6">
+      <section className="space-y-4">
+        <h1 className="text-3xl font-bold">My Listings</h1>
+        {!myListings?.length ? (
+          <div className="rounded-2xl bg-white/5 p-6 text-center">
+            <p className="mb-2">You have no listings.</p>
+            <Link href="/listing/new" className="rounded-xl bg-accent px-4 py-2 text-white">
+              Create a listing
+            </Link>
           </div>
-          <div>
-            <div className="font-semibold">Username</div>
-            <div className="opacity-80">{profile?.username}</div>
-          </div>
-        </section>
-        <section className="rounded-2xl bg-white/5 p-4">
-          <div className="mb-2 font-semibold">Your Listings</div>
-          <ul className="space-y-2">
-            {(myListings ?? []).map((l) => (
-              <li key={l.id} className="flex items-center justify-between">
-                <span>{l.title}</span>
-                <span className="opacity-70">${(l.price_cents ?? 0) / 100}</span>
+        ) : (
+          <ul className="space-y-3">
+            {myListings.map((l) => (
+              <li key={l.id} className="flex items-center gap-4 rounded-2xl bg-white/5 p-3">
+                <Link href={`/listing/${l.id}`} className="flex-shrink-0">
+                  <img
+                    src={l.image_url ?? '/placeholder.jpg'}
+                    alt={l.title}
+                    className="h-20 w-20 rounded object-cover"
+                  />
+                </Link>
+                <div className="flex-1">
+                  <Link href={`/listing/${l.id}`} className="font-medium hover:underline">
+                    {l.title}
+                  </Link>
+                  <div className="text-sm opacity-80">
+                    ${Number(l.price).toFixed(0)} · {l.status ?? '—'} · {new Date(l.created_at).toLocaleDateString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Link href={`/listing/${l.id}/edit`} className="text-sm hover:underline">
+                    Edit
+                  </Link>
+                  <form action={deleteListing}>
+                    <input type="hidden" name="id" value={l.id} />
+                    <button type="submit" className="text-sm text-red-400 hover:underline">
+                      Delete
+                    </button>
+                  </form>
+                </div>
               </li>
             ))}
           </ul>
-        </section>
-        <section className="rounded-2xl bg-white/5 p-4">
-          <div className="mb-2 font-semibold">Saved Items</div>
-          <ul className="space-y-2">
-            {(favs ?? []).map((f) => (
-              <li key={f.listing_id} className="flex items-center justify-between">
-                <span>{f.listings?.title}</span>
-                <span className="opacity-70">${(f.listings?.price_cents ?? 0) / 100}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
+        )}
+      </section>
     </main>
   )
 }
