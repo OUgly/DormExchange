@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
+import { uploadListingImages } from '@/lib/supabase/storage';
 
 export const ListingForm = () => {
   const router = useRouter();
@@ -29,7 +30,7 @@ export const ListingForm = () => {
     title: '',
     description: '',
     price: '' as string | number,
-    imageFile: null as File | null,
+    imageFiles: [] as File[],
     category: '',
     condition: '',
   });
@@ -43,64 +44,42 @@ export const ListingForm = () => {
 
     try {
       setSubmitting(true);
-      let imageUrl: string | null = null;
-
-      if (form.imageFile) {
-        const fileName = `${crypto.randomUUID()}-${form.imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
-        const { data: up, error: upErr } = await supabase
-          .storage
-          .from('listing-images')
-          .upload(fileName, form.imageFile, { 
-            cacheControl: '3600',
-            upsert: false
-          });
-          
-        if (upErr) {
-          console.error('Image upload error:', upErr);
-          throw new Error('Failed to upload image. Please try again.');
-        }
-
-        if (!up?.path) {
-          throw new Error('Failed to get upload path');
-        }
-
-        const { data: pub } = supabase.storage.from('listing-images').getPublicUrl(up.path);
-        if (!pub?.publicUrl) {
-          throw new Error('Failed to get public URL');
-        }
-        
-        imageUrl = pub.publicUrl;
-      }
 
       // Get the current campus from cookie
       const campusMatch = document.cookie.match(/(?:^|; )dx-campus=([^;]*)/);
       const campusSlug = campusMatch ? decodeURIComponent(campusMatch[1]) : null;
-      
-      if (!campusSlug) {
-        throw new Error('No campus selected');
-      }
+      if (!campusSlug) throw new Error('No campus selected');
 
       // Get current user
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('You must be logged in to create a listing');
+      if (!user) throw new Error('You must be logged in to create a listing');
+
+      const { data: inserted, error: insErr } = await supabase
+        .from('listings')
+        .insert({
+          title: form.title.trim(),
+          description: form.description?.trim() || '',
+          price: priceNum,
+          category: form.category,
+          condition: form.condition,
+          campus_slug: campusSlug,
+          status: 'active',
+          user_id: user.id
+        })
+        .select('id')
+        .single();
+      if (insErr || !inserted) throw insErr;
+
+      if (form.imageFiles.length) {
+        const urls = await uploadListingImages(supabase, inserted.id, form.imageFiles);
+        if (urls.length) {
+          const rows = urls.map((url, i) => ({ listing_id: inserted.id, url, sort_order: i }));
+          await supabase.from('listing_images').insert(rows);
+          await supabase.from('listings').update({ image_url: urls[0] }).eq('id', inserted.id);
+        }
       }
 
-      const { error: insErr } = await supabase.from('listings').insert({
-        title: form.title.trim(),
-        description: form.description?.trim() || '',
-        price: priceNum,
-        image_url: imageUrl,
-        category: form.category,
-        condition: form.condition,
-        campus_slug: campusSlug,
-        status: 'active',
-        user_id: user.id
-      });
-      if (insErr) throw insErr;
-
-      alert('Listing created!');
-      router.push('/');
+      router.push(`/listing/${inserted.id}`);
     } catch (error: any) {
       console.error(error);
       alert(error.message ?? 'Error creating listing');
@@ -157,8 +136,9 @@ export const ListingForm = () => {
 
       <Input
         type="file"
+        multiple
         accept="image/*"
-        onChange={(e) => setForm({ ...form, imageFile: e.target.files?.[0] || null })}
+        onChange={(e) => setForm({ ...form, imageFiles: Array.from(e.target.files ?? []) })}
       />
       <Button type="submit" disabled={submitting}>
         {submitting ? 'Saving…' : 'Create Listing'}

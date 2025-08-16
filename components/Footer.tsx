@@ -15,7 +15,7 @@ export default function Footer() {
           <div className="font-semibold mb-3">Product</div>
           <ul className="space-y-2 text-neutral-300">
             <li><a href="/market">Browse Listings</a></li>
-            <li><a href="/listings/new">Post a Listing</a></li>
+            <li><a href="/listing/new">Post a Listing</a></li>
             <li><a href="/messages">Messages</a></li>
           </ul>
         </div>
