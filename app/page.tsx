@@ -5,7 +5,7 @@ import Founders from '@/components/Founders'
 import HowItWorks from '@/components/HowItWorks'
 import Stats from '@/components/Stats'
 
-export const metadata = { title: 'DormExchange — Campus marketplace' }
+export const metadata = { title: 'DormXchange — Campus marketplace' }
 
 export default async function HomePage() {
   return (
@@ -24,7 +24,7 @@ export default async function HomePage() {
         </h1>
 
         <p className="mt-4 text-lg opacity-90">
-          DormExchange connects students to trade textbooks, furniture, and everything in between —
+          DormXchange connects students to trade textbooks, furniture, and everything in between —
           verified by your <span className="font-semibold">.edu</span> email.
         </p>
 
@@ -48,7 +48,7 @@ export default async function HomePage() {
         <div className="mx-auto mt-10 max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-white/5">
           <img
             src="/hero-market-preview.jpg"
-            alt="DormExchange market preview"
+            alt="DormXchange market preview"
             className="w-full object-cover"
           />
         </div>

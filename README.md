@@ -1,4 +1,4 @@
-# DormExchange SLC Skin
+# DormXchange SLC Skin
 
 ## Getting Started
 

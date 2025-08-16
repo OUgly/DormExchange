@@ -10,20 +10,27 @@ export type Listing = {
 
 export default function ListingCard({ listing }: { listing: Listing }) {
   return (
-    <article className="rounded-2xl bg-surface/40 shadow p-4 hover:bg-white/5 transition">
+    <article className="rounded-2xl bg-surface/40 shadow p-5 hover:bg-white/5 transition">
       <img
         src={listing.image_url ?? '/placeholder.jpg'}
         alt={listing.title}
-        className="h-40 w-full object-cover rounded-xl mb-3"
+        className="h-72 w-full object-cover rounded-xl mb-5"
         loading="lazy"
       />
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h3 className="font-semibold">{listing.title}</h3>
-          <p className="text-sm opacity-80">{listing.condition ?? '—'}</p>
-          {listing.category && <p className="text-xs opacity-60 mt-1">{listing.category}</p>}
+      <div className="space-y-3">
+        <div className="flex justify-between items-start gap-3">
+          <h3 className="font-semibold text-xl leading-tight">{listing.title}</h3>
+          <div className="text-xl font-bold whitespace-nowrap">${Number(listing.price).toFixed(0)}</div>
         </div>
-        <div className="text-lg font-bold">${Number(listing.price).toFixed(0)}</div>
+        <div className="flex items-center gap-2 text-sm opacity-80">
+          <span>{listing.condition ?? '—'}</span>
+          {listing.category && (
+            <>
+              <span className="opacity-50">•</span>
+              <span>{listing.category}</span>
+            </>
+          )}
+        </div>
       </div>
     </article>
   )

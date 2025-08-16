@@ -3,9 +3,9 @@ import Link from 'next/link'
 import FounderCard from '@/components/FounderCard'
 
 export const metadata = {
-  title: 'About • DormExchange',
+  title: 'About • DormXchange',
   description:
-    'DormExchange is the campus-only marketplace built by students, for students. Learn our mission and meet the founders.',
+    'DormXchange is the campus-only marketplace built by students, for students. Learn our mission and meet the founders.',
 }
 
 export default function AboutPage() {
@@ -33,10 +33,10 @@ export default function AboutPage() {
         <p className="text-xs inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1">
           Student-only • .edu verified • No listing fees
         </p>
-        <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold">About DormExchange</h1>
+        <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold">About DormXchange</h1>
         <p className="mt-3 text-lg opacity-90 max-w-3xl">
           We’re building the simplest, safest way for students to buy and sell on campus—without
-          spam, strangers, or fees. DormExchange is built by students, for students.
+          spam, strangers, or fees. DormXchange is built by students, for students.
         </p>
       </section>
 
@@ -76,7 +76,7 @@ export default function AboutPage() {
         <div className="rounded-2xl bg-surface/40 border border-white/5 p-6">
           <h2 className="text-2xl font-semibold">Our story</h2>
           <p className="mt-3 opacity-90">
-            DormExchange started when two friends kept hauling furniture across campus and chasing
+            DormXchange started when two friends kept hauling furniture across campus and chasing
             textbook leads in random group chats. We wanted one place that felt safe, was only for
             students, and actually worked fast.
           </p>
@@ -93,7 +93,7 @@ export default function AboutPage() {
               <div className="text-sm opacity-70">Summer 2025</div>
               <div className="font-semibold">First build</div>
               <p className="text-sm opacity-90 mt-1">
-                Next.js + Supabase, private beta at UAlbany.
+                Next.js + Supabase, private beta at Babson.
               </p>
             </li>
             <li className="rounded-xl bg-black/20 p-4">
@@ -110,7 +110,7 @@ export default function AboutPage() {
       {/* Team */}
       <section className="mx-auto max-w-5xl px-6 py-8">
         <h2 className="text-2xl font-semibold mb-4">Founders</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2 max-w-4xl">
           {founders.map((f) => (
             <FounderCard
               key={f.name}
@@ -121,15 +121,12 @@ export default function AboutPage() {
             />
           ))}
         </div>
-        <p className="mt-2 text-xs opacity-70">
-          Tip: drop founder photos into <code className="opacity-90">/public/founders/</code>.
-        </p>
       </section>
 
       {/* Contact / CTA */}
       <section className="mx-auto max-w-5xl px-6 py-12 text-center">
         <div className="rounded-2xl bg-white/5 p-8">
-          <h3 className="text-2xl font-semibold">Want DormExchange at your school?</h3>
+          <h3 className="text-2xl font-semibold">Want DormXchange at your school?</h3>
           <p className="mt-2 opacity-90">
             We’re adding campuses and student reps this semester.
           </p>
@@ -141,7 +138,7 @@ export default function AboutPage() {
               Choose your campus
             </Link>
             <a
-              href="mailto:founders@dormexchange.app?subject=DormExchange%20campus%20request"
+              href="mailto:founders@dormxchange.com?subject=DormXchange%20campus%20request"
               className="rounded-xl bg-white/10 px-5 py-3 hover:bg-white/20 transition"
             >
               Contact us

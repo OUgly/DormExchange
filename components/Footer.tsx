@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="mt-16 border-t border-line bg-panel">
       <div className="max-w-screen-xl mx-auto px-4 md:px-6 py-10 grid gap-8 md:grid-cols-4 text-sm">
         <div>
-          <div className="font-bold text-lg">DormExchange</div>
+          <div className="font-bold text-lg">DormXchange</div>
           <p className="text-neutral-400 mt-3">
             The campus marketplace for textbooks, tech, and dorm essentials.
           </p>
@@ -14,7 +14,7 @@ export default function Footer() {
         <div>
           <div className="font-semibold mb-3">Product</div>
           <ul className="space-y-2 text-neutral-300">
-            <li><a href="/">Browse Listings</a></li>
+            <li><a href="/market">Browse Listings</a></li>
             <li><a href="/listings/new">Post a Listing</a></li>
             <li><a href="/messages">Messages</a></li>
           </ul>
@@ -45,7 +45,7 @@ export default function Footer() {
 
       <div className="border-t border-line">
         <div className="max-w-screen-xl mx-auto px-4 md:px-6 py-4 text-xs flex items-center justify-between text-neutral-400">
-          <div>© {new Date().getFullYear()} DormExchange. All rights reserved.</div>
+          <div>© {new Date().getFullYear()} DormXchange. All rights reserved.</div>
           <div className="flex gap-4">
             <a href="/terms">Terms</a>
             <a href="/privacy">Privacy</a>

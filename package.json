@@ -1,5 +1,5 @@
 {
-  "name": "dormexchange-1",
+  "name": "dormxchange",
   "version": "1.0.0",
   "description": "",
   "main": "tailwind.config.js",
@@ -14,15 +14,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OUgly/DormExchange.git"
+    "url": "git+https://github.com/OUgly/DormXchange.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/OUgly/DormExchange/issues"
+    "url": "https://github.com/OUgly/DormXchange/issues"
   },
-  "homepage": "https://github.com/OUgly/DormExchange#readme",
+  "homepage": "https://github.com/OUgly/DormXchange#readme",
   "dependencies": {
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.54.0",

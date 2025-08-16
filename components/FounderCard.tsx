@@ -12,25 +12,27 @@ export default function FounderCard({ name, role, blurb, img }: Props) {
   const [ok, setOk] = useState(true)
 
   return (
-    <article className="rounded-2xl bg-surface/40 border border-white/5 overflow-hidden">
-      <div className="h-48 w-full bg-white/5">
+    <article className="rounded-2xl bg-surface/40 border border-white/5 overflow-hidden hover:bg-surface/60 transition duration-200">
+      <div className="h-80 w-full bg-white/5">
         {ok && img ? (
           <img
             src={img}
             alt={name}
-            className="h-48 w-full object-cover"
+            className="h-80 w-full object-cover"
             onError={() => setOk(false)}
           />
         ) : (
-          <div className="h-48 w-full flex items-center justify-center text-sm opacity-70">
+          <div className="h-80 w-full flex items-center justify-center text-sm opacity-70">
             Photo coming soon
           </div>
         )}
       </div>
-      <div className="p-5">
-        <div className="text-lg font-semibold">{name}</div>
-        <div className="text-sm opacity-80">{role}</div>
-        <p className="mt-2 text-sm opacity-90">{blurb}</p>
+      <div className="p-6 space-y-3">
+        <div>
+          <div className="text-xl font-semibold">{name}</div>
+          <div className="text-sm opacity-80 mt-1">{role}</div>
+        </div>
+        <p className="text-sm opacity-90 leading-relaxed">{blurb}</p>
       </div>
     </article>
   )

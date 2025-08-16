@@ -1,4 +1,4 @@
--- SQL schema for DormExchange
+-- SQL schema for DormXchange
 
 -- Profiles table mirrors Supabase auth users
 create table profiles (
