@@ -20,7 +20,7 @@ export default async function HomePage() {
         </p>
 
         <h1 className="mt-6 text-4xl sm:text-5xl font-extrabold leading-tight">
-          Buy & sell on your campus — fast, safe, student-only.
+          Buy & Sell on Your Campus — Fast, Safe, Student-Only.
         </h1>
 
         <p className="mt-4 text-lg opacity-90">
@@ -47,7 +47,7 @@ export default async function HomePage() {
 
         <div className="mx-auto mt-10 max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-white/5">
           <img
-            src="/hero-market-preview.jpg"
+            src="/hero/hero-market-preview.jpg"
             alt="DormXchange market preview"
             className="w-full object-cover"
           />

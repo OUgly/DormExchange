@@ -8,6 +8,15 @@ export type Listing = {
   category?: string | null
 }
 
+const CONDITION_LABELS: Record<string, string> = {
+  new: 'New',
+  like_new: 'Like New',
+  good: 'Good',
+  fair: 'Fair',
+  poor: 'Poor',
+  used: 'Used'
+}
+
 export default function ListingCard({ listing }: { listing: Listing }) {
   return (
     <article className="rounded-2xl bg-surface/40 shadow p-5 hover:bg-white/5 transition">
@@ -23,7 +32,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           <div className="text-xl font-bold whitespace-nowrap">${Number(listing.price).toFixed(0)}</div>
         </div>
         <div className="flex items-center gap-2 text-sm opacity-80">
-          <span>{listing.condition ?? '—'}</span>
+          <span>{listing.condition ? (CONDITION_LABELS[listing.condition] ?? listing.condition) : '—'}</span>
           {listing.category && (
             <>
               <span className="opacity-50">•</span>

@@ -7,6 +7,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid slug' }, { status: 400 })
   }
   const jar = await cookies()
-  jar.set('dx-campus', slug, { path: '/', maxAge: 60*60*24*365, sameSite: 'lax' })
-  return NextResponse.json({ ok: true })
+  // server-only cookie
+  jar.set('dx-campus', slug, {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 365,
+  })
+
+  // client-readable mirror
+  jar.set('dx-campus-public', slug, {
+    path: '/',
+    httpOnly: false,
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 365,
+  })
+
+  return NextResponse.json({ ok: true, slug })
 }

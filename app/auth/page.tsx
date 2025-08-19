@@ -21,7 +21,7 @@ export default function AuthPage() {
   const [msg, setMsg] = useState<string | null>(null)
 
   useEffect(() => {
-    const match = document.cookie.match(/(?:^|; )dx-campus=([^;]*)/)
+    const match = document.cookie.match(/(?:^|; )dx-campus-public=([^;]*)/)
     setCampusSlug(match ? decodeURIComponent(match[1]) : '')
   }, [])
 

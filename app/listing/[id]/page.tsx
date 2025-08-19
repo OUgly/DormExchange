@@ -2,8 +2,8 @@ import { notFound } from 'next/navigation'
 import ImageCarousel from '@/components/ImageCarousel'
 import { getSupabaseServer } from '@/lib/supabase/server'
 
-export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+export default async function ListingPage({ params }: { params: { id: string } }) {
+  const { id } = params
   const supabase = await getSupabaseServer()
   const { data: listing } = await supabase
     .from('listings')
