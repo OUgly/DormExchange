@@ -6,7 +6,7 @@ import MarketFilters from './MarketFilters'
 import type { Metadata } from 'next'
 import { unstable_noStore as noStore } from 'next/cache'
 
-export const metadata: Metadata = { title: 'Market • DormXchange' }
+export const metadata: Metadata = { title: 'Market — DormXchange' }
 
 type SearchParams = {
   q?: string
@@ -16,14 +16,14 @@ type SearchParams = {
   max?: string
 }
 
-export default async function MarketPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  noStore();
+export default async function MarketPage({ searchParams }: { searchParams: SearchParams }) {
+  noStore()
 
   const { user, campus, supabase } = await requireAuthAndCampus()
   if (!user) redirect('/auth/signin')
   if (!campus) redirect('/campus')
 
-  const params = await searchParams
+  const params = searchParams
 
   let query = supabase
     .from('listings')
@@ -59,9 +59,9 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
   if (error) throw new Error(error.message)
 
   // Transform listings to include images in the correct format
-  const transformedListings = (listings || []).map(listing => ({
+  const transformedListings = (listings || []).map((listing) => ({
     ...listing,
-    images: listing.listing_images || []
+    images: listing.listing_images || [],
   }))
 
   return (
@@ -73,7 +73,7 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
       <MarketFilters />
 
       {!transformedListings?.length ? (
-        <div className="rounded-2xl bg-surface/40 p-8 text-center">
+        <div className="rounded-2xl bg-white/5 p-8 text-center">
           <p className="text-lg">No listings yet for this campus.</p>
           <p className="opacity-80">Try adjusting filters or be the first to post a listing.</p>
         </div>
@@ -89,4 +89,5 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
     </main>
   )
 }
+
 

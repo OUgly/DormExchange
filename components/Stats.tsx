@@ -26,7 +26,7 @@ export default async function Stats() {
     <section className="mx-auto max-w-5xl px-6 pb-6">
       <div className="grid gap-4 sm:grid-cols-3">
         {items.map((it) => (
-          <div key={it.label} className="rounded-2xl bg-surface/40 p-5 text-center border border-white/5">
+          <div key={it.label} className="rounded-2xl bg-white/5 p-5 text-center border border-white/5">
             <div className="text-2xl font-bold">{it.value}</div>
             <div className="text-sm opacity-80">{it.label}</div>
           </div>
@@ -35,3 +35,4 @@ export default async function Stats() {
     </section>
   )
 }
+

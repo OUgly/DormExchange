@@ -1,10 +1,11 @@
 // Simple redirect page to handle auth callback redirects
 'use client'
+export const dynamic = 'force-dynamic'
 
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function AuthSuccess() {
+function AuthSuccessInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const next = searchParams.get('next') || '/market'
@@ -28,5 +29,13 @@ export default function AuthSuccess() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AuthSuccess() {
+  return (
+    <Suspense fallback={null}>
+      <AuthSuccessInner />
+    </Suspense>
   )
 }

@@ -47,6 +47,8 @@ export default async function ListingPage({ params }: { params: { id: string } }
     poor: 'Poor'
   }
 
+  const profile = (listing as any).profiles as { username?: string | null; avatar_url?: string | null } | null
+
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-4 py-6">
       {/* Image Carousel */}
@@ -99,21 +101,21 @@ export default async function ListingPage({ params }: { params: { id: string } }
           <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6">
             <h3 className="text-lg font-semibold mb-3">Seller</h3>
             <div className="flex items-center gap-3">
-              {listing.profiles?.avatar_url ? (
+              {profile?.avatar_url ? (
                 <img 
-                  src={listing.profiles.avatar_url} 
-                  alt={listing.profiles.username || 'Seller'}
+                  src={profile.avatar_url || ''} 
+                  alt={profile?.username || 'Seller'}
                   className="w-10 h-10 rounded-full"
                 />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center">
                   <span className="text-sm font-medium">
-                    {(listing.profiles?.username || 'U')[0].toUpperCase()}
+                    {(profile?.username || 'U')[0].toUpperCase()}
                   </span>
                 </div>
               )}
               <span className="text-gray-300">
-                {listing.profiles?.username || 'Anonymous Seller'}
+                {profile?.username || 'Anonymous Seller'}
               </span>
             </div>
           </div>

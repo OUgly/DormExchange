@@ -1,14 +1,15 @@
 "use server"
 
 import { createServerClient } from "@/lib/supabase/server"
-import { cookies } from "next/headers"
 import { Profile } from "@/types/db"
 
 export async function updateProfile(updates: Partial<Profile>) {
   try {
     const supabase = createServerClient()
 
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     if (!user) throw new Error("Not authenticated")
 
     const { data, error } = await supabase
@@ -18,11 +19,10 @@ export async function updateProfile(updates: Partial<Profile>) {
       .select()
       .single()
 
-      if (error) throw error
+    if (error) throw error
     return data
   } catch (error) {
     console.error('Error updating profile:', error)
     throw error
   }
-  return data
 }

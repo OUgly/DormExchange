@@ -50,13 +50,16 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Your custom colors
+        // Brand palette (avoid overriding shadcn tokens like muted/accent)
+        brand: {
+          accent: '#d9b70d',
+          muted: '#2f7a91'
+        },
+        // Simple aliases used in the UI
         bg: '#0c232d',
-        panel: '#384b53ff',
-        muted: '#2f7a91',
-        line: '#666674ff',
-        accent: '#d9b70d',
-        text: '#f5f5f5ff',
+        panel: '#384b53',
+        line: '#666674',
+        text: '#f5f5f5',
       },
       boxShadow: {
         card: '0 1px 0 0 #1717acff, 0 8px 20px rgba(0, 0, 0, 0.35)',

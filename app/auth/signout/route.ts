@@ -1,19 +1,14 @@
-import { getSupabaseServer } from '@/lib/supabase/server'
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
-  const supabase = await getSupabaseServer()
+  const cookieStore = cookies()
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
   await supabase.auth.signOut()
-  
-  // Clear campus cookie by setting it to expire immediately
-  const response = NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_SITE_URL))
-  response.cookies.set('dx-campus', '', { 
-    maxAge: 0,
-    path: '/' 
-  })
-  
+
+  const response = NextResponse.redirect('/')
+  response.cookies.set('dx-campus', '', { maxAge: 0, path: '/' })
+  response.cookies.set('dx-campus-public', '', { maxAge: 0, path: '/' })
   return response
-  
-  return NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_SITE_URL))
 }

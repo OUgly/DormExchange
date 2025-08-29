@@ -52,7 +52,7 @@ export function ProfileDialog({ profile, onSave }: ProfileDialogProps) {
     e.preventDefault()
     setLoading(true)
     try {
-      let updates: Partial<Profile> = { ...formData }
+      const updates: Partial<Profile> = { ...formData }
       
       // Upload avatar if a new one was selected
       if (avatarFile) {

@@ -62,7 +62,7 @@ export default function MarketFilters() {
   }
 
   return (
-    <section className="rounded-2xl bg-surface/40 p-4 flex flex-col lg:flex-row gap-3 items-stretch">
+    <section className="rounded-2xl bg-white/5 p-4 flex flex-col lg:flex-row gap-3 items-stretch">
       <input
         type="search"
         placeholder="Search listings..."
@@ -91,3 +91,4 @@ export default function MarketFilters() {
     </section>
   )
 }
+

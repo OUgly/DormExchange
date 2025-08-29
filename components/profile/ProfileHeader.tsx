@@ -28,15 +28,12 @@ export function ProfileHeader({ profile: initialProfile, onUpdateProfile }: Prof
       { name: 'grade', value: profile.grade },
       { name: 'listings_count', value: profile.listings_count > 0 },
     ]
-    
+
     const filledFields = fields.filter(field => {
       const isFilled = field.value !== null && field.value !== undefined && field.value !== ""
-      // Debug logging (remove in production)
-      console.log(`Profile field ${field.name}:`, field.value, isFilled ? '✅' : '❌')
       return isFilled
     })
-    
-    console.log(`Profile completion: ${filledFields.length}/${fields.length} fields filled`)
+
     return Math.round((filledFields.length / fields.length) * 100)
   }
 
@@ -64,9 +61,11 @@ export function ProfileHeader({ profile: initialProfile, onUpdateProfile }: Prof
               <p className="text-sm text-muted-foreground">@{profile.username}</p>
             )}
             <p className="text-sm text-muted-foreground">
-              {profile.member_status === "founder" ? "🌟 Founder" : 
-               profile.member_status === "cofounder" ? "✨ Co-founder" : 
-               "DormExchange Member"}
+              {profile.member_status === "founder"
+                ? "DormXchange Founder"
+                : profile.member_status === "cofounder"
+                ? "DormXchange Co-founder"
+                : "DormXchange Member"}
             </p>
             {profile.grade && (
               <p className="text-sm text-muted-foreground">
@@ -106,10 +105,10 @@ export function ProfileHeader({ profile: initialProfile, onUpdateProfile }: Prof
           <h3 className="text-sm font-medium text-muted-foreground">Contact</h3>
           <div className="space-y-1">
             {profile.contact_email && (
-              <p className="text-sm">📧 {profile.contact_email}</p>
+              <p className="text-sm">Email: {profile.contact_email}</p>
             )}
             {profile.phone && (
-              <p className="text-sm">📞 {profile.phone}</p>
+              <p className="text-sm">Phone: {profile.phone}</p>
             )}
           </div>
         </div>
@@ -131,3 +130,4 @@ export function ProfileHeader({ profile: initialProfile, onUpdateProfile }: Prof
     </div>
   )
 }
+
