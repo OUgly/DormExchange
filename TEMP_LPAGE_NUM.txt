@@ -1,0 +1,91 @@
+   2: import ImageCarousel from '@/components/ImageCarousel'
+   4: import MessageSellerButton from '@/components/MessageSellerButton'
+   6: 
+   9:   const supabase = createServerClient()
+  10:   
+  11:   // Get listing with profile information
+  13:     .from('listings')
+  14:     .select(`
+  15:       id,
+  16:       title,
+  17:       description,
+  18:       price,
+  19:       condition,
+  20:       category,
+  21:       image_url,
+  22:       user_id,
+  23:       created_at,
+  24:       profiles:profiles!listings_user_id_fkey(username, avatar_url, display_name)
+  25:     `)
+  26:     .eq('id', id)
+  27:     .maybeSingle()
+  28:   
+  29:   if (!listing) notFound()
+  30: 
+  31:   // Get listing images
+  33:     .from('listing_images')
+  34:     .select('url,sort_order')
+  35:     .eq('listing_id', id)
+  36:     .order('sort_order')
+  37: 
+  38:   // Use listing_images if available, fallback to image_url, then placeholder
+  39:   let imageUrls = (images ?? []).map((i) => i.url)
+  41:     imageUrls = [listing.image_url]
+  43: 
+  45:     new: 'New',
+  46:     like_new: 'Like New', 
+  47:     good: 'Good',
+  48:     fair: 'Fair',
+  49:     poor: 'Poor'
+  51: 
+  54:   const isOwner = !!user && user.id === listing.user_id
+  55: 
+  56:   return (
+  57:     <div className="mx-auto max-w-4xl space-y-8 px-4 py-6">
+  59:       <div className="w-full">
+  61:       </div>
+  62: 
+  64:       <div className="grid gap-8 lg:grid-cols-3">
+  66:         <div className="lg:col-span-2 space-y-6">
+  67:           <div>
+  69:             <div className="flex items-center gap-4 text-sm text-gray-400">
+  71:                 <span className="px-3 py-1 bg-gray-800 rounded-full">
+  73:                 </span>
+  76:                 <span className="px-3 py-1 bg-gray-800 rounded-full">
+  78:                 </span>
+  81:             </div>
+  82:           </div>
+  83: 
+  85:             <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6">
+  86:               <h2 className="text-lg font-semibold mb-3">Description</h2>
+  88:             </div>
+  90:         </div>
+  91: 
+  93:         <div className="space-y-6">
+  95:           <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6 space-y-3">
+  99:             ) : (
+ 102:                 <button className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition">
+ 103:                   Delete Listing
+ 104:                 </button>
+ 105:               </form>
+ 107:           </div>
+ 108: 
+ 110:           <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6">
+ 111:             <h3 className="text-lg font-semibold mb-3">Seller</h3>
+ 112:             <div className="flex items-center gap-3">
+ 114:                 <img 
+ 117:                   className="w-10 h-10 rounded-full"
+ 118:                 />
+ 119:               ) : (
+ 120:                 <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center">
+ 121:                   <span className="text-sm font-medium">
+ 123:                   </span>
+ 124:                 </div>
+ 126:               <span className="text-gray-300">
+ 128:               </span>
+ 129:             </div>
+ 130:           </div>
+ 131:         </div>
+ 132:       </div>
+ 133:     </div>
+ 134:   )

@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
 import { Profile } from "@/types/db"
+import Link from "next/link"
 import { getNameInitials } from "@/lib/utils"
 import { ProfileDialog } from "./ProfileDialog"
 
@@ -88,7 +89,10 @@ export function ProfileHeader({ profile: initialProfile, onUpdateProfile }: Prof
             </div>
           </div>
         </div>
-        <ProfileDialog profile={profile} onSave={handleUpdate} />
+        <div className="flex items-center gap-2">
+          <Link href="/messages" className="rounded-lg border px-3 py-1 hover:bg-white/10">Messages</Link>
+          <ProfileDialog profile={profile} onSave={handleUpdate} />
+        </div>
       </div>
 
       {/* Bio Section */}
@@ -130,4 +134,3 @@ export function ProfileHeader({ profile: initialProfile, onUpdateProfile }: Prof
     </div>
   )
 }
-
