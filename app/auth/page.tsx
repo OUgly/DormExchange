@@ -1,11 +1,12 @@
 'use client'
-import { useEffect, useMemo, useState } from 'react'
+export const dynamic = 'force-dynamic'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 
-const GRADES = ['Freshman','Sophomore','Junior','Senior','Graduate','Other'] as const
+const GRADES = ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate', 'Other'] as const
 
-export default function AuthPage() {
+function AuthPageInner() {
   const params = useSearchParams()
   const router = useRouter()
   const next = params.get('next') ?? '/market'
@@ -21,7 +22,7 @@ export default function AuthPage() {
   const [msg, setMsg] = useState<string | null>(null)
 
   useEffect(() => {
-    const match = document.cookie.match(/(?:^|; )dx-campus=([^;]*)/)
+    const match = document.cookie.match(/(?:^|; )dx-campus-public=([^;]*)/)
     setCampusSlug(match ? decodeURIComponent(match[1]) : '')
   }, [])
 
@@ -79,7 +80,9 @@ export default function AuthPage() {
   return (
     <main className="container mx-auto px-4 py-10 max-w-md">
       <h1 className="text-3xl font-bold mb-2">Create your account</h1>
-      <p className="opacity-80 mb-6">Campus: <span className="font-medium">{campusSlug}</span></p>
+      <p className="opacity-80 mb-6">
+        Campus: <span className="font-medium">{campusSlug}</span>
+      </p>
 
       <form onSubmit={handleSignUp} className="space-y-4">
         <input
@@ -88,7 +91,9 @@ export default function AuthPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={`yourname@${campusDomains[0] ?? 'school.edu'}`}
-          className={`w-full rounded-xl px-4 py-3 bg-white/10 outline-none placeholder:opacity-70 ${domainOk || !email ? '' : 'ring-2 ring-red-500'}`}
+          className={`w-full rounded-xl px-4 py-3 bg-white/10 outline-none placeholder:opacity-70 ${
+            domainOk || !email ? '' : 'ring-2 ring-red-500'
+          }`}
         />
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -107,7 +112,9 @@ export default function AuthPage() {
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             placeholder="Confirm password"
-            className={`w-full rounded-xl px-4 py-3 bg-white/10 outline-none placeholder:opacity-70 ${!confirm || pwMatch ? '' : 'ring-2 ring-red-500'}`}
+            className={`w-full rounded-xl px-4 py-3 bg-white/10 outline-none placeholder:opacity-70 ${
+              !confirm || pwMatch ? '' : 'ring-2 ring-red-500'
+            }`}
           />
         </div>
 
@@ -126,23 +133,34 @@ export default function AuthPage() {
           onChange={(e) => setGrade(e.target.value as any)}
           className="w-full rounded-xl px-4 py-3 bg-white/10 outline-none"
         >
-          <option value="" disabled>School year</option>
-          {GRADES.map(g => <option key={g} value={g}>{g}</option>)}
+          <option value="" disabled>
+            School year
+          </option>
+          {GRADES.map((g) => (
+            <option key={g} value={g}>
+              {g}
+            </option>
+          ))}
         </select>
 
         {!domainOk && email && (
           <p className="text-sm text-red-400">Use your school email: {campusDomains.join(', ')}</p>
         )}
 
-        <button
-          disabled={loading}
-          className="w-full rounded-xl px-4 py-3 bg-yellow-400 text-black font-semibold disabled:opacity-60"
-        >
+        <button disabled={loading} className="w-full rounded-xl px-4 py-3 bg-yellow-400 text-black font-semibold disabled:opacity-60">
           {loading ? 'Creating account…' : 'Create account'}
         </button>
 
         {msg && <p className="text-sm opacity-80">{msg}</p>}
       </form>
     </main>
+  )
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={null}>
+      <AuthPageInner />
+    </Suspense>
   )
 }

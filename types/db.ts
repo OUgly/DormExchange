@@ -6,6 +6,18 @@ export interface Profile {
   id: string
   username: string | null
   avatar_url: string | null
+  member_status: 'founder' | 'cofounder' | 'member'
+  listings_count: number
+  messages_sent: number
+  ratings_received: number
+  bio: string | null
+  campus_id: string | null
+  grade: string | null
+  display_name: string | null
+  edu_verified: boolean
+  contact_email: string | null
+  phone: string | null
+  created_at: string
 }
 
 export interface Listing {
@@ -16,7 +28,34 @@ export interface Listing {
   price: number
   image_url: string | null
   created_at: string
+  status: 'active' | 'sold' | 'draft' | 'hidden'
+  saved_count?: number
 }
+
+export interface ProfileStats {
+  active_count: number
+  sold_count: number
+  saved_count: number
+  unread_count: number
+  profile_completion: number
+}
+
+export interface ListingParams {
+  status?: string
+  sort?: 'newest' | 'oldest' | 'price_asc' | 'price_desc' | 'most_saved'
+  page?: number
+  pageSize?: number
+}
+
+export interface ListingImage {
+  id: string
+  listing_id: string
+  url: string
+  sort_order: number
+  created_at: string
+}
+
+export type ListingWithImages = Listing & { images: ListingImage[] }
 
 export interface Comment {
   id: string

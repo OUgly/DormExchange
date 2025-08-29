@@ -20,7 +20,7 @@ export default async function HomePage() {
         </p>
 
         <h1 className="mt-6 text-4xl sm:text-5xl font-extrabold leading-tight">
-          Buy & sell on your campus — fast, safe, student-only.
+          Buy &amp; Sell on Your Campus — Fast, Safe, Student-Only.
         </h1>
 
         <p className="mt-4 text-lg opacity-90">
@@ -35,10 +35,7 @@ export default async function HomePage() {
           >
             Choose your campus
           </Link>
-          <Link
-            href="/market"
-            className="rounded-xl bg-white/10 px-5 py-3 hover:bg-white/20 transition"
-          >
+          <Link href="/market" className="rounded-xl bg-white/10 px-5 py-3 hover:bg-white/20 transition">
             Browse listings
           </Link>
         </div>
@@ -46,11 +43,7 @@ export default async function HomePage() {
         <div className="mt-4 text-xs opacity-80">EDU-only • No public spam • Zero listing fees</div>
 
         <div className="mx-auto mt-10 max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-          <img
-            src="/hero-market-preview.jpg"
-            alt="DormXchange market preview"
-            className="w-full object-cover"
-          />
+          <img src="/hero/hero-market-preview.jpg" alt="DormXchange market preview" className="w-full object-cover" />
         </div>
       </section>
 
@@ -81,3 +74,4 @@ export default async function HomePage() {
     </main>
   )
 }
+

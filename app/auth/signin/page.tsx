@@ -1,9 +1,10 @@
 'use client'
-import { useEffect, useMemo, useState } from 'react'
+export const dynamic = 'force-dynamic'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 
-export default function SignInPage() {
+function SignInPageInner() {
   const params = useSearchParams()
   const router = useRouter()
   const next = params.get('next') ?? '/market'
@@ -16,7 +17,7 @@ export default function SignInPage() {
   const [msg, setMsg] = useState<string | null>(null)
 
   useEffect(() => {
-    const match = document.cookie.match(/(?:^|; )dx-campus=([^;]*)/)
+    const match = document.cookie.match(/(?:^|; )dx-campus-public=([^;]*)/)
     setCampusSlug(match ? decodeURIComponent(match[1]) : '')
   }, [])
 
@@ -90,5 +91,13 @@ export default function SignInPage() {
         Need an account? <a href="/auth" className="underline">Sign up</a>
       </p>
     </main>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignInPageInner />
+    </Suspense>
   )
 }

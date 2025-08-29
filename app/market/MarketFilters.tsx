@@ -13,7 +13,14 @@ function useDebounced<T>(value: T, delay = 300) {
 }
 
 const CATEGORIES = ['Textbooks','Electronics','Clothing','Furniture','Other']
-const CONDITIONS = ['New','Like New','Good','Used']
+const CONDITIONS = [
+  { label: 'New', value: 'new' },
+  { label: 'Like New', value: 'like_new' },
+  { label: 'Good', value: 'good' },
+  { label: 'Fair', value: 'fair' },
+  { label: 'Poor', value: 'poor' },
+  { label: 'Used', value: 'used' }
+]
 
 export default function MarketFilters() {
   const router = useRouter()
@@ -55,7 +62,7 @@ export default function MarketFilters() {
   }
 
   return (
-    <section className="rounded-2xl bg-surface/40 p-4 flex flex-col lg:flex-row gap-3 items-stretch">
+    <section className="rounded-2xl bg-white/5 p-4 flex flex-col lg:flex-row gap-3 items-stretch">
       <input
         type="search"
         placeholder="Search listings..."
@@ -71,7 +78,7 @@ export default function MarketFilters() {
 
       <select value={condition} onChange={(e)=>setCondition(e.target.value)} className="rounded-xl bg-black/20 px-3 py-2">
         <option value="">Any condition</option>
-        {CONDITIONS.map(c => <option key={c} value={c}>{c}</option>)}
+        {CONDITIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
       </select>
 
       <input inputMode="numeric" placeholder="Min $" value={min} onChange={(e)=>setMin(e.target.value)} className="w-28 rounded-xl bg-black/20 px-3 py-2" />
@@ -84,3 +91,4 @@ export default function MarketFilters() {
     </section>
   )
 }
+

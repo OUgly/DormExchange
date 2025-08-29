@@ -4,7 +4,7 @@ import Link from 'next/link'
 export default function Founders() {
   return (
     <section className="mx-auto max-w-5xl px-6 py-12">
-      <div className="rounded-2xl bg-surface/40 p-6 border border-white/5">
+      <div className="rounded-2xl bg-white/5 p-6 border border-white/5">
         <div className="grid gap-8 md:grid-cols-[1fr,1.2fr] items-center">
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold">The story</h2>
@@ -52,3 +52,4 @@ export default function Founders() {
     </section>
   )
 }
+

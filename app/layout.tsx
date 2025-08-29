@@ -2,7 +2,7 @@
 // The root layout for all pages. Global styles and shared UI live here.
 import '../styles/globals.css'
 import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'   // ⬅️ import Footer
+import Footer from '@/components/Footer'
 import { ReactNode } from 'react'
 
 export const metadata = {
@@ -15,8 +15,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="flex min-h-screen flex-col bg-bg text-white antialiased">
         <Navbar />
         <main className="flex-1">{children}</main>
-        <Footer /> {/* ⬅️ render Footer after page content */}
+        <Footer />
       </body>
     </html>
   )
 }
+

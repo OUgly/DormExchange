@@ -10,7 +10,7 @@ export default function HowItWorks() {
       <h2 className="text-2xl font-semibold mb-6">How it works</h2>
       <div className="grid gap-4 sm:grid-cols-3">
         {steps.map((s) => (
-          <div key={s.title} className="rounded-2xl bg-surface/40 p-5 border border-white/5">
+          <div key={s.title} className="rounded-2xl bg-white/5 p-5 border border-white/5">
             <div className="text-lg font-semibold">{s.title}</div>
             <p className="mt-2 text-sm opacity-90">{s.body}</p>
           </div>
@@ -19,3 +19,4 @@ export default function HowItWorks() {
     </section>
   )
 }
+

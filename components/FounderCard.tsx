@@ -12,7 +12,7 @@ export default function FounderCard({ name, role, blurb, img }: Props) {
   const [ok, setOk] = useState(true)
 
   return (
-    <article className="rounded-2xl bg-surface/40 border border-white/5 overflow-hidden hover:bg-surface/60 transition duration-200">
+    <article className="rounded-2xl bg-white/5 border border-white/5 overflow-hidden hover:bg-white/10 transition duration-200">
       <div className="h-80 w-full bg-white/5">
         {ok && img ? (
           <img
@@ -37,3 +37,4 @@ export default function FounderCard({ name, role, blurb, img }: Props) {
     </article>
   )
 }
+

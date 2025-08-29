@@ -62,7 +62,7 @@ export default function AboutPage() {
           ].map((c) => (
             <div
               key={c.title}
-              className="rounded-2xl bg-surface/40 p-5 border border-white/5"
+              className="rounded-2xl bg-white/5 p-5 border border-white/5"
             >
               <div className="text-lg font-semibold">{c.title}</div>
               <p className="mt-2 text-sm opacity-90">{c.body}</p>
@@ -73,7 +73,7 @@ export default function AboutPage() {
 
       {/* Story */}
       <section className="mx-auto max-w-5xl px-6 py-8">
-        <div className="rounded-2xl bg-surface/40 border border-white/5 p-6">
+        <div className="rounded-2xl bg-white/5 border border-white/5 p-6">
           <h2 className="text-2xl font-semibold">Our story</h2>
           <p className="mt-3 opacity-90">
             DormXchange started when two friends kept hauling furniture across campus and chasing
@@ -149,3 +149,4 @@ export default function AboutPage() {
     </main>
   )
 }
+
