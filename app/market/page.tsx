@@ -27,7 +27,19 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
 
   let query = supabase
     .from('listings')
-    .select('id,title,price,condition,image_url,category')
+    .select(`
+      id,
+      title,
+      description,
+      price,
+      condition,
+      image_url,
+      category,
+      user_id,
+      status,
+      created_at,
+      listing_images(id, url, sort_order, created_at, listing_id)
+    `)
     .eq('campus_slug', campus)
     .eq('status', 'active')
     .order('created_at', { ascending: false })
@@ -46,6 +58,12 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
   const { data: listings, error } = await query
   if (error) throw new Error(error.message)
 
+  // Transform listings to include images in the correct format
+  const transformedListings = (listings || []).map(listing => ({
+    ...listing,
+    images: listing.listing_images || []
+  }))
+
   return (
     <main className="px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <header className="flex items-center justify-between gap-4">
@@ -54,14 +72,14 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
 
       <MarketFilters />
 
-      {!listings?.length ? (
+      {!transformedListings?.length ? (
         <div className="rounded-2xl bg-surface/40 p-8 text-center">
           <p className="text-lg">No listings yet for this campus.</p>
           <p className="opacity-80">Try adjusting filters or be the first to post a listing.</p>
         </div>
       ) : (
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-[1600px] mx-auto">
-          {listings.map((l) => (
+          {transformedListings.map((l) => (
             <Link key={l.id} href={`/listing/${l.id}`} className="block">
               <ListingCard listing={l} />
             </Link>

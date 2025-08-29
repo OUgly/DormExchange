@@ -1,5 +1,5 @@
 // components/Stats.tsx
-import { getSupabaseServer } from '@/lib/supabase/server'
+import { createServerClient } from '@/lib/supabase/server'
 
 export default async function Stats() {
   // Fallbacks in case DB fails
@@ -7,7 +7,7 @@ export default async function Stats() {
   let listings = 0
 
   try {
-    const supabase = await getSupabaseServer()
+    const supabase = createServerClient()
     const { count: cCount } = await supabase.from('campuses').select('slug', { count: 'exact', head: true })
     const { count: lCount } = await supabase.from('listings').select('id', { count: 'exact', head: true })
     campuses = cCount ?? campuses

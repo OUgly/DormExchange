@@ -2,10 +2,10 @@
 
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { getSupabaseServer } from '@/lib/supabase/server'
+import { createServerClient } from '@/lib/supabase/server'
 
 export async function signOut() {
-  const supabase = await getSupabaseServer()
+  const supabase = createServerClient()
   await supabase.auth.signOut()
 
   const jar = await cookies()
