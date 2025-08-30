@@ -7,6 +7,7 @@ import Logo from './Logo'
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null)
+  const [unread, setUnread] = useState<number>(0)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -33,6 +34,40 @@ export default function Navbar() {
       cleanup.then(unsubscribe => unsubscribe?.())
     }
   }, [])
+
+  useEffect(() => {
+    if (!mounted || !user) return
+    let cancelled = false
+
+    const fetchUnread = async () => {
+      try {
+        const lastSeen = localStorage.getItem('messagesLastSeenAt') || '1970-01-01T00:00:00.000Z'
+        const { count } = await supabase
+          .from('messages')
+          .select('id', { count: 'exact', head: true })
+          .eq('to_user_id', user.id)
+          .gt('created_at', lastSeen)
+        if (!cancelled) setUnread(count || 0)
+      } catch (e) {
+        if (!cancelled) setUnread(0)
+      }
+    }
+
+    fetchUnread()
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'messagesLastSeenAt') fetchUnread()
+    }
+    window.addEventListener('storage', onStorage)
+
+    const interval = window.setInterval(fetchUnread, 30000)
+
+    return () => {
+      cancelled = true
+      window.removeEventListener('storage', onStorage)
+      window.clearInterval(interval)
+    }
+  }, [mounted, user?.id])
 
   const handleSignOut = async () => {
     try {
@@ -75,6 +110,14 @@ export default function Navbar() {
           {/* Right: actions */}
           <div className="flex items-center gap-3">
             <Link href="/market" className="hover:opacity-80">Market</Link>
+            <Link href="/messages" className="relative hover:opacity-80">
+              Messages
+              {user && unread > 0 && (
+                <span className="absolute -right-2 -top-1 inline-flex items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] leading-4 text-white">
+                  {unread > 9 ? '9+' : unread}
+                </span>
+              )}
+            </Link>
             <Link href="/profile" className="hover:opacity-80">Profile</Link>
             <Link href="/campus" className="hover:opacity-80">Change Campus</Link>
             {user ? (

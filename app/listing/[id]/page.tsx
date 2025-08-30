@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
 import ImageCarousel from '@/components/ImageCarousel'
 import { createServerClient } from '@/lib/supabase/server'
+import { deleteListingAction } from './actions'
+import { actionCreateOrGetThread } from '@/app/(actions)/messages'
 
 export default async function ListingPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -18,8 +20,7 @@ export default async function ListingPage({ params }: { params: { id: string } }
       category,
       image_url,
       user_id,
-      created_at,
-      profiles(username, avatar_url)
+      created_at
     `)
     .eq('id', id)
     .maybeSingle()
@@ -47,7 +48,18 @@ export default async function ListingPage({ params }: { params: { id: string } }
     poor: 'Poor'
   }
 
-  const profile = (listing as any).profiles as { username?: string | null; avatar_url?: string | null } | null
+  // Fetch seller profile separately; ignore errors (RLS may block when unauthenticated)
+  let profile: { username?: string | null; display_name?: string | null; avatar_url?: string | null } | null = null
+  try {
+    const { data: prof } = await supabase
+      .from('profiles')
+      .select('username, display_name, avatar_url')
+      .eq('id', listing.user_id)
+      .maybeSingle()
+    profile = prof ?? null
+  } catch {}
+  const { data: { user } } = await supabase.auth.getUser()
+  const isOwner = !!user && user.id === listing.user_id
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-4 py-6">
@@ -88,13 +100,26 @@ export default async function ListingPage({ params }: { params: { id: string } }
         {/* Right Column - Price & Seller */}
         <div className="space-y-6">
           {/* Price Card */}
-          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6">
-            <div className="text-3xl font-bold text-white mb-4">
-              ${Number(listing.price).toFixed(0)}
-            </div>
-            <button className="w-full bg-accent hover:bg-accent/90 text-black font-semibold py-3 px-4 rounded-xl transition">
-              Contact Seller
-            </button>
+          <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6 space-y-3">
+            <div className="text-3xl font-bold text-white">${Number(listing.price).toFixed(0)}</div>
+            {!isOwner ? (
+              <form action={async (fd: FormData) => {
+                'use server'
+                await actionCreateOrGetThread(fd)
+              }}>
+                <input type="hidden" name="listingId" value={listing.id} />
+                <button className="w-full rounded-xl bg-accent px-4 py-3 font-semibold text-black hover:bg-accent/90">
+                  Message Seller
+                </button>
+              </form>
+            ) : (
+              <form action={deleteListingAction}>
+                <input type="hidden" name="listingId" value={listing.id} />
+                <button className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition">
+                  Delete Listing
+                </button>
+              </form>
+            )}
           </div>
 
           {/* Seller Card */}
@@ -115,7 +140,7 @@ export default async function ListingPage({ params }: { params: { id: string } }
                 </div>
               )}
               <span className="text-gray-300">
-                {profile?.username || 'Anonymous Seller'}
+                {profile?.display_name || profile?.username || 'Anonymous Seller'}
               </span>
             </div>
           </div>
