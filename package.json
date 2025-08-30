@@ -41,6 +41,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.541.0",
     "next": "^14.2.10",
+    "nodemailer": "^6.9.14",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "shadcn-ui": "^0.9.5",
