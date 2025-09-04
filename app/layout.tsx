@@ -9,6 +9,9 @@ export const metadata = {
   title: 'DormExchange',
 }
 
+// Run entire app on the Edge Runtime
+export const runtime = 'edge'
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
@@ -20,4 +23,3 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     </html>
   )
 }
-

@@ -1,6 +1,4 @@
 "use server"
-
-import nodemailer from "nodemailer"
 import { z } from "zod"
 
 const ContactSchema = z.object({
@@ -40,23 +38,6 @@ export async function sendContact(_: ContactActionState | undefined, formData: F
     }
   }
 
-  const host = process.env.SMTP_HOST
-  const port = Number(process.env.SMTP_PORT || 587)
-  const user = process.env.SMTP_USER
-  const pass = process.env.SMTP_PASS
-  const secure = process.env.SMTP_SECURE === "true" || port === 465
-
-  if (!host || !user || !pass) {
-    return { ok: false, error: "Email is not configured on the server." }
-  }
-
-  const transporter = nodemailer.createTransport({
-    host,
-    port,
-    secure,
-    auth: { user, pass },
-  })
-
   const toAddress = process.env.CONTACT_TO || "dormxchangeteam@gmail.com"
   const fromAddress = process.env.CONTACT_FROM
   if (!fromAddress) {
@@ -76,14 +57,28 @@ export async function sendContact(_: ContactActionState | undefined, formData: F
   `
 
   try {
-    await transporter.sendMail({
-      from: { name: "DormXchange Website", address: fromAddress },
-      to: toAddress,
-      replyTo: parsed.data.email,
-      subject,
-      text,
-      html,
+    const res = await fetch("https://api.mailchannels.net/tx/v1/send", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        personalizations: [{
+          to: [{ email: toAddress }],
+          dkim_domain: undefined,
+        }],
+        from: { email: fromAddress, name: "DormXchange Website" },
+        subject,
+        content: [
+          { type: "text/plain", value: text },
+          { type: "text/html", value: html },
+        ],
+        headers: { "Reply-To": parsed.data.email },
+      }),
     })
+    if (!res.ok) {
+      const info = await res.text().catch(() => "")
+      console.error("MailChannels error", res.status, info)
+      return { ok: false, error: "Failed to send message. Please try again later." }
+    }
     return { ok: true }
   } catch (err: any) {
     console.error("Contact email failed:", err)

@@ -177,8 +177,8 @@ export default async function MessagesIndexPage({
               </svg>
             </div>
             <h3 className="text-xl font-semibold mb-2">No messages yet</h3>
-            <p className="text-gray-400 mb-4">When you start conversations with other users, they'll appear here.</p>
-            <p className="text-sm text-gray-500">Browse the marketplace to find items you're interested in!</p>
+            <p className="text-gray-400 mb-4">When you start conversations with other users, they&apos;ll appear here.</p>
+            <p className="text-sm text-gray-500">Browse the marketplace to find items you&apos;re interested in!</p>
           </>
         )}
       </div>
