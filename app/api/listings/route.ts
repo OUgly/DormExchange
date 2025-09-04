@@ -1,13 +1,8 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs/promises'
-import path from 'path'
-import { v4 as uuid } from 'uuid'
-
-const dataPath = path.join(process.cwd(), 'data', 'listings.json')
+import listings from '@/data/listings.json'
 
 export async function GET() {
-  const data = JSON.parse(await fs.readFile(dataPath, 'utf-8'))
-  return NextResponse.json(data)
+  return NextResponse.json(listings)
 }
 
 export async function POST(request: Request) {
@@ -19,17 +14,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
   }
   const newListing = {
-    id: uuid(),
+    id: crypto.randomUUID(),
     createdAt: new Date().toISOString(),
     userId: request.headers.get('x-user-id'),
     ...body,
   }
-  try {
-    const data = JSON.parse(await fs.readFile(dataPath, 'utf-8'))
-    data.push(newListing)
-    await fs.writeFile(dataPath, JSON.stringify(data, null, 2))
-    return NextResponse.json(newListing)
-  } catch {
-    return NextResponse.json({ ...newListing, persist: false })
-  }
+  // Edge runtime has no filesystem; simulate success but mark non-persistent
+  return NextResponse.json({ ...newListing, persist: false })
 }
