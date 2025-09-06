@@ -11,6 +11,10 @@ npm run dev
 - Seed data in `data/listings.json`.
 - Mock writes won't persist on Vercel.
 
+## Deploying to Vercel
+
+- See `VERCEL_DEPLOYMENT.md` for environment variables and webhook setup.
+
 ## Messaging (threads)
 
 - New schema adds `message_threads`, `message_thread_participants`, and `messages` with RLS so only participants can see/write.
