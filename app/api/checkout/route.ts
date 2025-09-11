@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     if (listing.status && listing.status !== 'active')
       return NextResponse.json({ error: 'Listing is not available' }, { status: 400 })
 
-  const stripe = new Stripe(key, { apiVersion: '2024-06-20' })
+  const stripe = new Stripe(key, { apiVersion: '2023-10-16' })
 
     const amountCents = Math.max(0, Math.round(Number(listing.price) * 100))
     if (!Number.isFinite(amountCents) || amountCents <= 0)
