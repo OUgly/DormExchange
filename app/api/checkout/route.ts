@@ -61,7 +61,8 @@ export async function POST(request: Request) {
     const buyerFee = Math.max(0, Math.round((amountCents * bps) / 10_000))
     const total = amountCents + buyerFee
 
-    const origin = process.env.APP_URL || new URL(request.url).origin
+    // Prefer the current request origin so preview deployments work without changing APP_URL
+    const origin = new URL(request.url).origin
 
     session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -91,7 +92,7 @@ export async function POST(request: Request) {
     })
   } else {
     // Platform-only charge (no Connect)
-    const origin = process.env.APP_URL || new URL(request.url).origin
+    const origin = new URL(request.url).origin
     session = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],

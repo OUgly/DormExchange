@@ -49,7 +49,8 @@ async function doOnboard(request: Request) {
       .eq('id', user.id)
   }
 
-  const origin = process.env.APP_URL || new URL(request.url).origin
+  // Prefer the current request origin so preview deployments work without changing APP_URL
+  const origin = new URL(request.url).origin
   const link = await stripe.accountLinks.create({
     account: acctId,
     type: 'account_onboarding',
