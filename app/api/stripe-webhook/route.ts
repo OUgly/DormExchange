@@ -1,5 +1,6 @@
 import Stripe from 'stripe'
 import { NextResponse } from 'next/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -37,6 +38,16 @@ export async function POST(request: Request) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
         console.log('Checkout completed:', session.id)
+        // Mark listing as sold if we have metadata
+        const listingId = (session.metadata && (session.metadata as any).listing_id) || null
+        if (listingId) {
+          try {
+            const admin = createAdminClient()
+            await admin.from('listings').update({ status: 'sold' }).eq('id', listingId)
+          } catch (e) {
+            console.error('Failed to update listing status to sold', e)
+          }
+        }
         break
       }
       case 'payment_intent.succeeded': {
