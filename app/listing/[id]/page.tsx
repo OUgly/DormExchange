@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import ImageCarousel from '@/components/ImageCarousel'
+import CheckoutBanner from '@/components/CheckoutBanner'
 import BuyNowButton from '@/components/BuyNowButton'
 import { createServerClient } from '@/lib/supabase/server'
 import { deleteListingAction } from './actions'
@@ -21,7 +22,8 @@ export default async function ListingPage({ params }: { params: { id: string } }
       category,
       image_url,
       user_id,
-      created_at
+      created_at,
+      status
     `)
     .eq('id', id)
     .maybeSingle()
@@ -100,12 +102,24 @@ export default async function ListingPage({ params }: { params: { id: string } }
 
         {/* Right Column - Price & Seller */}
         <div className="space-y-6">
+          {/* Banner for checkout results */}
+          <CheckoutBanner />
+
           {/* Price Card */}
           <div className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6 space-y-3">
             <div className="text-3xl font-bold text-white">${Number(listing.price).toFixed(0)}</div>
             {!isOwner ? (
               <>
-                <BuyNowButton listingId={listing.id} />
+                {listing.status === 'active' ? (
+                  <BuyNowButton listingId={listing.id} />
+                ) : (
+                  <button
+                    disabled
+                    className="w-full rounded-xl bg-gray-600 text-white font-semibold px-4 py-3 opacity-70"
+                  >
+                    {listing.status === 'sold' ? 'Sold' : 'Unavailable'}
+                  </button>
+                )}
                 <form
                   action={async (fd: FormData) => {
                     'use server'

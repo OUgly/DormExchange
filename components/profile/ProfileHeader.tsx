@@ -103,6 +103,24 @@ export function ProfileHeader({ profile: initialProfile, onUpdateProfile }: Prof
         </div>
       )}
 
+      {/* Stripe payouts (Connect) setup */}
+      {!profile.seller_charges_enabled && (
+        <div className="space-y-3 rounded-lg border border-yellow-600/40 bg-yellow-500/10 p-4">
+          <h3 className="text-sm font-medium text-yellow-300">Set up payouts</h3>
+          <p className="text-sm text-yellow-200/90">
+            To receive money from your sales, complete Stripe Express onboarding.
+          </p>
+          <form method="post" action="/api/stripe/connect/onboard">
+            <button
+              className="mt-1 rounded-md bg-yellow-400 px-3 py-2 text-black font-semibold hover:bg-yellow-300"
+              type="submit"
+            >
+              Set up payouts
+            </button>
+          </form>
+        </div>
+      )}
+
       {/* Contact Info */}
       {(profile.contact_email || profile.phone) && (
         <div className="space-y-2">

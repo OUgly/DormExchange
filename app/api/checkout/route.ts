@@ -32,17 +32,67 @@ export async function POST(request: Request) {
     if (listing.status && listing.status !== 'active')
       return NextResponse.json({ error: 'Listing is not available' }, { status: 400 })
 
-    const stripe = new Stripe(key, { apiVersion: '2023-10-16' })
+  const stripe = new Stripe(key, { apiVersion: '2024-06-20' })
 
     const amountCents = Math.max(0, Math.round(Number(listing.price) * 100))
     if (!Number.isFinite(amountCents) || amountCents <= 0)
       return NextResponse.json({ error: 'Invalid listing price' }, { status: 400 })
 
+  // If Stripe Connect is enabled, require seller to have onboarded and split funds at charge time
+  const useConnect = (process.env.USE_STRIPE_CONNECT || '').toLowerCase() === 'true'
+
+  let session: Stripe.Checkout.Session
+  if (useConnect) {
+    // Pull seller's connected account and status
+    const { data: sellerProfile } = await supabase
+      .from('profiles')
+      .select('seller_stripe_account_id, seller_charges_enabled')
+      .eq('id', listing.user_id)
+      .maybeSingle()
+
+    const destination = sellerProfile?.seller_stripe_account_id as string | undefined
+    const chargesEnabled = !!sellerProfile?.seller_charges_enabled
+    if (!destination || !chargesEnabled) {
+      return NextResponse.json({ error: 'Seller has not set up payouts' }, { status: 400 })
+    }
+
+    // Compute application fee (default 7%) in cents
+    const bps = Number(process.env.PLATFORM_FEE_BPS ?? '700') // 700 bps = 7%
+    const buyerFee = Math.max(0, Math.round((amountCents * bps) / 10_000))
+    const total = amountCents + buyerFee
+
     const origin = process.env.APP_URL || new URL(request.url).origin
 
-    // Create basic Checkout Session (platform account). If Connect is configured later,
-    // we can extend this to set application_fee_amount and transfer_data.destination.
-    const session = await stripe.checkout.sessions.create({
+    session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      line_items: [
+        {
+          quantity: 1,
+          price_data: {
+            currency: 'usd',
+            unit_amount: total,
+            product_data: {
+              name: listing.title,
+            },
+          },
+        },
+      ],
+      success_url: `${origin}/listing/${listing.id}?success=1`,
+      cancel_url: `${origin}/listing/${listing.id}?canceled=1`,
+      payment_intent_data: {
+        application_fee_amount: buyerFee,
+        transfer_data: { destination },
+      },
+      metadata: {
+        listing_id: listing.id,
+        seller_id: listing.user_id || '',
+        buyer_id: user.id,
+      },
+    })
+  } else {
+    // Platform-only charge (no Connect)
+    const origin = process.env.APP_URL || new URL(request.url).origin
+    session = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],
       line_items: [
@@ -66,6 +116,7 @@ export async function POST(request: Request) {
       success_url: `${origin}/listing/${listing.id}?success=1`,
       cancel_url: `${origin}/listing/${listing.id}?canceled=1`,
     })
+  }
 
     return NextResponse.json({ url: session.url, id: session.id })
   } catch (err) {
