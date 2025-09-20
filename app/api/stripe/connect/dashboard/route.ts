@@ -38,10 +38,7 @@ async function handleDashboard(request: Request) {
   }
 
   try {
-    const origin = new URL(request.url).origin
-    const link = await stripe.accounts.createLoginLink(accountId, {
-      redirect_url: ${origin}/payouts?dashboard=1,
-    })
+    const link = await stripe.accounts.createLoginLink(accountId)
     return NextResponse.redirect(link.url, 303)
   } catch (err) {
     console.error('Failed to create Stripe dashboard login link', err)
