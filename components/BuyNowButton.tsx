@@ -17,12 +17,18 @@ export default function BuyNowButton({ listingId }: { listingId: string }) {
         window.location.href = `/auth?next=${next}`
         return
       }
-      const data = await res.json()
-      if (!res.ok || !data?.url) throw new Error(data?.error || 'Checkout failed')
+      const data = (await res.json().catch(() => null)) as { url?: string; error?: string } | null
+      if (!res.ok) {
+        throw new Error(data?.error || 'Unable to start checkout. Please try again.')
+      }
+      if (!data?.url) {
+        throw new Error('Missing checkout session URL')
+      }
       window.location.href = data.url
     } catch (e) {
       console.error(e)
-      alert('Unable to start checkout. Please try again.')
+      const message = e instanceof Error && e.message ? e.message : 'Unable to start checkout. Please try again.'
+      alert(message)
     } finally {
       setLoading(false)
     }
@@ -34,8 +40,7 @@ export default function BuyNowButton({ listingId }: { listingId: string }) {
       disabled={loading}
       className="w-full rounded-xl bg-yellow-400 text-black font-semibold px-4 py-3 hover:bg-yellow-300 disabled:opacity-60"
     >
-      {loading ? 'Starting checkout…' : 'Buy Now'}
+      {loading ? 'Starting checkout...' : 'Buy Now'}
     </button>
   )
 }
-
