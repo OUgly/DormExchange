@@ -96,7 +96,7 @@ export async function POST(request: Request) {
             },
           },
         ],
-        success_url: `${origin}/listing/${listing.id}?success=1`,
+        success_url: `${origin}/listing/${listing.id}?success=1&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/listing/${listing.id}?canceled=1`,
         payment_intent_data: {
           application_fee_amount: buyerFee,
@@ -131,7 +131,7 @@ export async function POST(request: Request) {
           buyer_id: user.id,
           seller_id: listing.user_id || '',
         },
-        success_url: `${origin}/listing/${listing.id}?success=1`,
+        success_url: `${origin}/listing/${listing.id}?success=1&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/listing/${listing.id}?canceled=1`,
       })
     }
