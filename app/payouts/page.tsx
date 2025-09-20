@@ -1,3 +1,4 @@
+import Stripe from 'stripe'
 import { createServerClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -12,6 +13,9 @@ export default async function PayoutsPage({
     data: { user },
   } = await supabase.auth.getUser()
 
+  const useConnect = (process.env.USE_STRIPE_CONNECT || '').toLowerCase() === 'true'
+  const stripeKey = process.env.STRIPE_SECRET_KEY
+
   let seller_charges_enabled: boolean | null = null
   let seller_stripe_account_id: string | null = null
   if (user) {
@@ -22,6 +26,25 @@ export default async function PayoutsPage({
       .maybeSingle()
     seller_charges_enabled = (profile?.seller_charges_enabled as boolean) ?? null
     seller_stripe_account_id = (profile?.seller_stripe_account_id as string) ?? null
+
+    if (useConnect && stripeKey && seller_stripe_account_id) {
+      try {
+        const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' })
+        const account = await stripe.accounts.retrieve(seller_stripe_account_id)
+        const refreshedChargesEnabled = !!account.charges_enabled
+        if (refreshedChargesEnabled !== seller_charges_enabled) {
+          await supabase
+            .from('profiles')
+            .update({ seller_charges_enabled: refreshedChargesEnabled })
+            .eq('id', user.id)
+          seller_charges_enabled = refreshedChargesEnabled
+        } else {
+          seller_charges_enabled = refreshedChargesEnabled
+        }
+      } catch (err) {
+        console.error('Failed to refresh Stripe Connect status', err)
+      }
+    }
   }
 
   const isReturn = typeof searchParams?.return !== 'undefined'
