@@ -18,6 +18,9 @@ export interface Profile {
   contact_email: string | null
   phone: string | null
   created_at: string
+  // Stripe Connect (seller payouts)
+  seller_stripe_account_id?: string | null
+  seller_charges_enabled?: boolean
 }
 
 export interface Listing {

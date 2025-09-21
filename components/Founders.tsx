@@ -10,9 +10,9 @@ export default function Founders() {
             <h2 className="text-2xl font-semibold">The story</h2>
             <p className="opacity-90">
               Hey — we’re <span className="font-semibold">Jake</span> and <span className="font-semibold">Louie</span>.
-              We built DormXchange after hauling sofas up three flights and hunting down rare
-              textbooks in random group chats. We wanted a simple, campus-only marketplace that
-              actually felt safe and moved fast.
+              We decided to build DormXchange after a sketchy meetup trying to sell our dorm fridge to someone off campus,
+              and after hunting down rare textbooks in random group chats.
+              We wanted a simple, campus-only marketplace that actually felt safe and moved fast.
             </p>
             <p className="opacity-90">
               Our goal is to save students time and money every semester — and keep good stuff out
@@ -33,23 +33,21 @@ export default function Founders() {
               <img src="/founders/louie.jpg" alt="Louie" className="h-75 w-full object-cover" />
               <figcaption className="p-5 text-sm opacity-90">
                 <div className="font-semibold mb-2 text-base">Louie</div>
-                <div>UAlbany • Cybersecurity → builder</div>
+                <div>UAlbany • Builder</div>
               </figcaption>
             </figure>
             <figure className="rounded-2xl overflow-hidden border border-white/10 bg-surface/20">
               <img src="/founders/jake.jpg" alt="Jake" className="h-75 w-full object-cover" />
               <figcaption className="p-5 text-sm opacity-90">
                 <div className="font-semibold mb-2 text-base">Jake</div>
-                <div>Babson • Ops & growth</div>
+                <div>Babson • Ops & Growth</div>
               </figcaption>
             </figure>
           </div>
         </div>
       </div>
-      <p className="mt-3 text-xs opacity-70">
-        (Drop your photos at <code className="opacity-90">/public/founders/louie.jpg</code> and <code className="opacity-90">/public/founders/jake.jpg</code>; or keep stock images for now.)
-      </p>
     </section>
   )
 }
+
 

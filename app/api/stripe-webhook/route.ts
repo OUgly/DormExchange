@@ -1,5 +1,6 @@
 import Stripe from 'stripe'
 import { NextResponse } from 'next/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -37,6 +38,20 @@ export async function POST(request: Request) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
         console.log('Checkout completed:', session.id)
+        // Mark listing as sold and save payment_intent_id for reconciliation
+        const listingId = (session.metadata && (session.metadata as any).listing_id) || null
+        const payment_intent_id = (session.payment_intent as string) || null
+        if (listingId) {
+          try {
+            const admin = createAdminClient()
+            await admin
+              .from('listings')
+              .update({ status: 'sold', payment_intent_id })
+              .eq('id', listingId)
+          } catch (e) {
+            console.error('Failed to update listing status to sold', e)
+          }
+        }
         break
       }
       case 'payment_intent.succeeded': {
@@ -47,6 +62,19 @@ export async function POST(request: Request) {
       case 'account.updated': {
         const account = event.data.object as Stripe.Account
         console.log('Connect account updated:', account.id)
+        // Persist charges_enabled status on the profile for UI gating
+        try {
+          const admin = createAdminClient()
+          await admin
+            .from('profiles')
+            .update({
+              seller_charges_enabled: !!account.charges_enabled,
+              seller_stripe_account_id: account.id,
+            })
+            .eq('seller_stripe_account_id', account.id)
+        } catch (e) {
+          console.error('Failed to update seller charges_enabled', e)
+        }
         break
       }
       default:
