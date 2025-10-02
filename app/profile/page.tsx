@@ -13,9 +13,11 @@ export default async function ProfilePage() {
       <Suspense fallback={<ProfileSkeleton />}>
         <div className="space-y-8">
           {/* Profile header with avatar, name, completion */}
-          <ProfileHeader 
+          <ProfileHeader
             profile={profile}
-            onUpdateProfile={updateProfile} />
+            onUpdateProfile={updateProfile}
+            userEmail={user.email}
+          />
           
           {/* Stats grid */}
           {/* <ProfileStats userId={user.id} /> */}

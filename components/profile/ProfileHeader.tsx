@@ -7,15 +7,22 @@ import { Profile } from "@/types/db"
 import Link from "next/link"
 import { getNameInitials } from "@/lib/utils"
 import { ProfileDialog } from "./ProfileDialog"
+import { requestPasswordResetEmail } from "@/lib/auth/reset"
 
 interface ProfileHeaderProps {
   profile: Profile
   onUpdateProfile: (updates: Partial<Profile>) => Promise<void>
+  userEmail?: string | null
 }
 
-export function ProfileHeader({ profile: initialProfile, onUpdateProfile }: ProfileHeaderProps) {
+export function ProfileHeader({ profile: initialProfile, onUpdateProfile, userEmail }: ProfileHeaderProps) {
   const [profile, setProfile] = useState(initialProfile)
   const hasStripeAccount = !!profile.seller_stripe_account_id
+  const [resettingPassword, setResettingPassword] = useState(false)
+  const [resetMessage, setResetMessage] = useState<string | null>(null)
+  const [resetIsError, setResetIsError] = useState(false)
+
+  const accountEmail = userEmail ?? ""
 
   // Calculate profile completion based on filled fields
   const calculateCompletion = () => {
@@ -43,6 +50,28 @@ export function ProfileHeader({ profile: initialProfile, onUpdateProfile }: Prof
     await onUpdateProfile(updates)
     // Update local state to reflect changes immediately
     setProfile(prev => ({ ...prev, ...updates }))
+  }
+
+  const handlePasswordReset = async () => {
+    setResetMessage(null)
+    if (!accountEmail) {
+      setResetIsError(true)
+      setResetMessage('No email found for your account.')
+      return
+    }
+
+    setResettingPassword(true)
+    try {
+      const redirect = `${window.location.origin}/auth/reset?next=${encodeURIComponent('/profile')}`
+      await requestPasswordResetEmail(accountEmail, redirect)
+      setResetIsError(false)
+      setResetMessage('Reset link sent! Check your inbox.')
+    } catch (error: any) {
+      setResetIsError(true)
+      setResetMessage(error?.message ?? "Couldn't send reset email. Try again soon.")
+    } finally {
+      setResettingPassword(false)
+    }
   }
 
   const completion = calculateCompletion()
@@ -90,9 +119,22 @@ export function ProfileHeader({ profile: initialProfile, onUpdateProfile }: Prof
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Link href="/messages" className="rounded-lg border px-3 py-1 hover:bg-white/10">Messages</Link>
-          <ProfileDialog profile={profile} onSave={handleUpdate} />
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-2">
+            <Link href="/messages" className="rounded-lg border px-3 py-1 hover:bg-white/10">Messages</Link>
+            <button
+              type="button"
+              onClick={handlePasswordReset}
+              disabled={resettingPassword}
+              className="rounded-lg border px-3 py-1 hover:bg-white/10 disabled:opacity-60"
+            >
+              {resettingPassword ? 'Sending reset...' : 'Reset password'}
+            </button>
+            <ProfileDialog profile={profile} onSave={handleUpdate} />
+          </div>
+          {resetMessage && (
+            <p className={`text-xs ${resetIsError ? 'text-red-300' : 'text-emerald-200'}`}>{resetMessage}</p>
+          )}
         </div>
       </div>
 
