@@ -10,10 +10,8 @@ export default function ResetPasswordPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  const code = searchParams.get('code')
-  const accessToken = searchParams.get('access_token')
-  const refreshToken = searchParams.get('refresh_token')
   const next = searchParams.get('next') ?? '/market'
+  const searchParamSignature = searchParams.toString()
 
   const [stage, setStage] = useState<Stage>('verifying')
   const [password, setPassword] = useState('')
@@ -26,6 +24,42 @@ export default function ResetPasswordPage() {
 
     async function verify() {
       if (stage !== 'verifying') return
+
+      let code = searchParams.get('code')
+      let accessToken = searchParams.get('access_token')
+      let refreshToken = searchParams.get('refresh_token')
+
+      if (typeof window !== 'undefined') {
+        const hash = window.location.hash
+        const hashParams = hash ? new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash) : null
+
+        if (hashParams) {
+          const authKeys = ['access_token', 'refresh_token', 'expires_at', 'expires_in', 'token_type', 'type', 'code']
+          const currentSearch = new URLSearchParams(window.location.search)
+          let replaced = false
+
+          authKeys.forEach((key) => {
+            const hashValue = hashParams.get(key)
+            if (!hashValue) return
+            if (!currentSearch.has(key)) {
+              currentSearch.set(key, hashValue)
+              replaced = true
+            }
+          })
+
+          if (replaced) {
+            const base = window.location.pathname
+            const queryString = currentSearch.toString()
+            const newUrl = queryString ? `${base}?${queryString}` : base
+            router.replace(newUrl, { scroll: false })
+            return
+          }
+
+          code = code ?? hashParams.get('code')
+          accessToken = accessToken ?? hashParams.get('access_token')
+          refreshToken = refreshToken ?? hashParams.get('refresh_token')
+        }
+      }
 
       if (!code && !(accessToken && refreshToken)) {
         if (!cancelled) {
@@ -82,7 +116,7 @@ export default function ResetPasswordPage() {
     return () => {
       cancelled = true
     }
-  }, [stage, code, accessToken, refreshToken, next])
+  }, [stage, searchParamSignature, next, router])
 
   useEffect(() => {
     if (stage !== 'success') return
