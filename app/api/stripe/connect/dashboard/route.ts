@@ -1,6 +1,6 @@
 import Stripe from 'stripe'
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase/server'
+import { createRouteClient } from '@/lib/supabase/server'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -14,7 +14,7 @@ async function handleDashboard(request: Request) {
     return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
   }
 
-  const supabase = createServerClient()
+  const supabase = createRouteClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
